@@ -55,7 +55,7 @@
 #define MESH_FILE     "Periodic_square.msh"                                                         // GMSH mesh.
 #define MESH          GMSH_HOME MESH_FILE                                                           // GMSH mesh (full path).
 #define LOG_FILE      "Data"                                                                        // Log file name.
-#define LOG_HEADER    "Spin bubble."                                                                // Log file header.
+#define LOG_HEADER    "Vacuum decay."                                                               // Log file header.
 #define LOG_EXTENSION "txt"                                                                         // Log file extension.
 #define LOG           LOG_HOME LOG_FILE                                                             // Log file name (full name, timestamp and extension to be added).
 
@@ -69,8 +69,8 @@ int main ()
   size_t              j;                                                                            // Index [#].
   size_t              j_min;                                                                        // Index [#].
   size_t              j_max;                                                                        // Index [#].
-  int                 time_index;                                                                   // Index [#].
-  int                 trial_index;                                                                  // Index [#].
+  unsigned int        time_index;                                                                   // Index [#].
+  unsigned int        trial_index;                                                                  // Index [#].
 
   // MOUSE PARAMETERS:
   float               ms_orbit_rate   = 1.0f;                                                       // Orbit rotation rate [rev/s].
@@ -187,7 +187,7 @@ int main ()
   {
     std::cout << "i = " << i << ", node index = " << vacuum->node[i] << ", neighbour indices:";     // Printing message...
 
-    srand (time (NULL));                                                                            // Setting C++ rand() seed...
+    srand ((unsigned int)time (NULL));                                                              // Setting C++ rand() seed...
     state_theta->data.push_back ({rand (), rand (), rand (), rand ()});                             // Setting state_sz seed...
     state_threshold->data.push_back ({rand (), rand (), rand (), rand ()});                         // Setting state_th seed...
     color->data.push_back ({0.0f, 1.0f, 0.0f, 1.0f});                                               // Setting node color...
@@ -365,6 +365,7 @@ int main ()
       cl->write (5);                                                                                // Updating theta...
       cl->write (6);                                                                                // Updating theta (intermediate)...
       trial_index++;                                                                                // Updating trial_index...
+      time_index = 0;                                                                               // Resetting time_index...
     }
 
     hud->space (50);
