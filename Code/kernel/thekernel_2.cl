@@ -14,7 +14,7 @@ __kernel void thekernel(__global float4*    color,                              
                         __global float*     transverse_H,                       // Transverse magnetic field.
                         __global float*     temperature,                        // Temperature.
                         __global float*     radial_exponent,                    // Radial exponent.
-                        __global int*       rows,                               // Number of rows in mesh.
+                        __global int*       columns,                               // Number of columns in mesh.
                         __global float*     spin_z_row_sum,                     // z-spin row summation.
                         __global float*     spin_z2_row_sum,                    // z-spin square row summation.
                         __global float*     ds_simulation,                      // Mesh side.
