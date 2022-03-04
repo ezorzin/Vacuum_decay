@@ -1,21 +1,24 @@
 /// @file
 
 // Central node energy function:
-float E_central(float Hx, float Hz, float theta_central)
+float E_central(float c_1, float c_2, float lambda, float mu, float T, float phi_central)
 {
   float E;                                                                      // Energy.
   
-  E = -(Hx*cos(theta_central) + Hz*sin(theta_central));                         // Computing energy...
+  // Computing energy:
+  E = (1 - pown(mu, 2) + c_1*pown(T, 2))*pown(phi_central, 2) + 
+      (c_2*T)*pown(phi_central, 3) + 
+      lambda*pown(phi_central, 4);                         
 
   return E;
 }
 
 // Neighbour node energy function:
-float E_neighbour(float C_radial, float theta_neighbour, float theta_central)
+float E_neighbour(float C_radial, float phi_neighbour, float phi_central)
 {
   float E;                                                                      // Energy.
   
-  E = -(C_radial*sin(theta_neighbour)*sin(theta_central));                      // Computing energy...
+  E = -(C_radial*sin(phi_neighbour)*sin(phi_central));                          // Computing energy...
 
   return E;
 }
@@ -25,16 +28,20 @@ __kernel void thekernel(__global float4*    color,                              
                         __global int*       central,                            // Node.
                         __global int*       nearest,                            // Neighbour.
                         __global int*       offset,                             // Offset. 
-                        __global float*     theta,                              // Theta.  
-                        __global float*     theta_int,                          // Theta (intermediate value). 
-                        __global int4*      state_theta,                        // Random number generator state.
+                        __global float*     phi,                                // phi.  
+                        __global float*     phi_int,                            // phi (intermediate value). 
+                        __global int4*      state_phi,                          // Random number generator state.
                         __global int4*      state_threshold,                    // Random number generator state. 
                         __global int*       max_rejections,                     // Maximum allowed number of rejections. 
-                        __global float*     longitudinal_H,                     // Longitudinal magnetic field.
-                        __global float*     transverse_H,                       // Transverse magnetic field.
-                        __global float*     temperature,                        // Temperature.
+                        __global float*     c_1_parameter,                      // c_1 parameter.
+                        __global float*     c_2_parameter,                      // c_2 parameter.
+                        __global float*     lambda_parameter,                   // lambda parameter.
+                        __global float*     mu_parameter,                       // mu parameter.
+                        __global float*     T_parameter,                        // T parameter.
+                        __global float*     T_hat_parameter,                    // T_hat parameter.
+                        __global float*     phi_max_parameter,                  // phi_max parameter.
                         __global float*     radial_exponent,                    // Radial exponent.
-                        __global int*       columns,                               // Number of columns in mesh.
+                        __global int*       columns,                            // Number of columns in mesh.
                         __global float*     spin_z_row_sum,                     // z-spin row summation.
                         __global float*     spin_z2_row_sum,                    // z-spin square row summation.
                         __global float*     ds_simulation,                      // Mesh side.
@@ -60,15 +67,19 @@ __kernel void thekernel(__global float4*    color,                              
   float        L                 = 0.0f;                                        // Neighbour link length.
   float        dt                = dt_simulation[0];                            // Simulation time step [s].
   float        ds                = ds_simulation[0];                            // Simulation space step.
-  uint4        st_theta          = convert_uint4(state_theta[n]);               // Random generator state.
+  uint4        st_phi            = convert_uint4(state_phi[n]);                 // Random generator state.
   uint4        st_threshold      = convert_uint4(state_threshold[n]);           // Random generator state.
-  float        Hx                = longitudinal_H[0];                           // Longitudinal magnetic field.
-  float        Hz                = transverse_H[0];                             // Transverse magnetic field.
+  float        c_1               = c_1_parameter[0];                            // c_1 parameter.
+  float        c_2               = c_2_parameter[0];                            // c_2 parameter.
+  float        lambda            = lambda_parameter[0];                         // lambda parameter.
+  float        mu                = mu_parameter[0];                             // mu parameter.
+  float        T                 = T_parameter[0];                              // T parameter.
+  float        T_hat             = T_hat_parameter[0];                          // T_hat parameter.
+  float        phi_max           = phi_max_parameter[0];                        // phi_max parameter.
   float        E                 = 0.0f;                                        // Energy function.
   float        En                = 0.0f;                                        // Energy of central node.
-  float        theta_rand        = 0.0f;                                        // Flat random theta.
+  float        phi_rand          = 0.0f;                                        // Flat random phi.
   float        threshold_rand    = 0.0f;                                        // Flat random threshold.
-  float        T                 = temperature[0];                              // Temperature.
   float        alpha             = radial_exponent[0];                          // Radial exponent.
   float        D                 = 0.0f;                                        // Distributed random z-spin.
   uint         m_max             = max_rejections[0];                           // Maximum allowed number of rejections.
@@ -87,10 +98,10 @@ __kernel void thekernel(__global float4*    color,                              
   // COMPUTING RANDOM Z-SPIN FROM DISTRIBUTION (rejection sampling):
   do
   {
-    theta_rand = uint_to_float(xoshiro128pp(&st_theta), 0.0f, 2.0f*M_PI_F);     // Generating random theta (flat distribution)...
+    phi_rand = uint_to_float(xoshiro128pp(&st_phi), 0.0f, phi_max);             // Generating random theta (flat distribution)...
     threshold_rand = uint_to_float(xoshiro128pp(&st_threshold), 0.0f, +1.0f);   // Generating random threshold (flat distribution)...
-    En = E_central(Hx, Hz, theta[n]);                                           // Computing central energy term on central theta...
-    E = E_central(Hx, Hz, theta_rand);                                          // Computing central energy term on random theta...
+    En = E_central(c_1, c_2, lambda, mu, T, phi[n]);                            // Computing central energy term on central theta...
+    E = E_central(c_1, c_2, lambda, mu, T, phi_rand);                           // Computing central energy term on random theta...
 
     // COMPUTING ENERGY:
     for (j = j_min; j < j_max; j++)
@@ -110,16 +121,16 @@ __kernel void thekernel(__global float4*    color,                              
         L = sqrt(2.0f)*ds;
       }
       
-      En += E_neighbour(0.5f/pow(L/ds, alpha), theta[k], theta[n]);             // Accumulating neighbour energy terms on central z-spin...
-      E += E_neighbour(0.5f/pow(L/ds, alpha), theta[k], theta_rand);            // Accumulating neighbour energy terms on random z-spin...          
+      En += E_neighbour(0.5f/pow(L/ds, alpha), phi[k], phi[n]);                 // Accumulating neighbour energy terms on central z-spin...
+      E += E_neighbour(0.5f/pow(L/ds, alpha), phi[k], phi_rand);                // Accumulating neighbour energy terms on random z-spin...          
     }
     
-    D = 1.0f/(1.0f + exp((E - En)/T));                                          // Computing new z-spin candidate from distribution...
+    D = 1.0f/(1.0f + exp((E - En)/T_hat));                                      // Computing new z-spin candidate from distribution...
     m++;                                                                        // Updating rejection index...
   }
   while ((threshold_rand > D) && (m < m_max));                                  // Evaluating new z-spin candidate (discarding if not found before m_max iterations)...
 
-  theta_int[n] = theta_rand;                                                    // Setting new z-spin (intermediate value)...
-  state_theta[n] = convert_int4(st_theta);                                      // Updating random generator state...
+  phi_int[n] = phi_rand;                                                        // Setting new z-spin (intermediate value)...
+  state_phi[n] = convert_int4(st_phi);                                          // Updating random generator state...
   state_threshold[n] = convert_int4(st_threshold);                              // Updating random generator state...
 }

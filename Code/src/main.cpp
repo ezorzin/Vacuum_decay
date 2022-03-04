@@ -76,52 +76,56 @@ int main ()
   unsigned int        seed;                                                                         // Seed for C++ rand().
 
   // MOUSE PARAMETERS:
-  float               ms_orbit_rate   = 1.0f;                                                       // Orbit rotation rate [rev/s].
-  float               ms_pan_rate     = 5.0f;                                                       // Pan translation rate [m/s].
-  float               ms_decaytime    = 1.25f;                                                      // Pan LP filter decay time [s].
+  float               ms_orbit_rate     = 1.0f;                                                     // Orbit rotation rate [rev/s].
+  float               ms_pan_rate       = 5.0f;                                                     // Pan translation rate [m/s].
+  float               ms_decaytime      = 1.25f;                                                    // Pan LP filter decay time [s].
 
   // GAMEPAD PARAMETERS:
-  float               gmp_orbit_rate  = 1.0f;                                                       // Orbit angular rate coefficient [rev/s].
-  float               gmp_pan_rate    = 1.0f;                                                       // Pan translation rate [m/s].
-  float               gmp_decaytime   = 1.25f;                                                      // Low pass filter decay time [s].
-  float               gmp_deadzone    = 0.30f;                                                      // Gamepad joystick deadzone [0...1].
+  float               gmp_orbit_rate    = 1.0f;                                                     // Orbit angular rate coefficient [rev/s].
+  float               gmp_pan_rate      = 1.0f;                                                     // Pan translation rate [m/s].
+  float               gmp_decaytime     = 1.25f;                                                    // Low pass filter decay time [s].
+  float               gmp_deadzone      = 0.30f;                                                    // Gamepad joystick deadzone [0...1].
 
   // OPENGL:
-  nu::opengl*         gl              = new nu::opengl (NM, SX, SY, OX, OY, PX, PY, PZ);            // OpenGL context.
-  nu::shader*         S               = new nu::shader ();                                          // OpenGL shader program.
-  nu::projection_mode proj_mode       = nu::MONOCULAR;                                              // OpenGL projection mode.
+  nu::opengl*         gl                = new nu::opengl (NM, SX, SY, OX, OY, PX, PY, PZ);          // OpenGL context.
+  nu::shader*         S                 = new nu::shader ();                                        // OpenGL shader program.
+  nu::projection_mode proj_mode         = nu::MONOCULAR;                                            // OpenGL projection mode.
 
   // OPENCL:
-  nu::opencl*         cl              = new nu::opencl (nu::GPU);                                   // OpenCL context.
-  nu::kernel*         K0              = new nu::kernel ();                                          // OpenCL kernel array.
-  nu::kernel*         K1              = new nu::kernel ();                                          // OpenCL kernel array.
-  nu::kernel*         K2              = new nu::kernel ();                                          // OpenCL kernel array.
-  nu::kernel*         K3              = new nu::kernel ();                                          // OpenCL kernel array.
-  nu::float4*         color           = new nu::float4 (0);                                         // Color [].
-  nu::float4*         position        = new nu::float4 (1);                                         // Position [m].
-  nu::int1*           central         = new nu::int1 (2);                                           // Central nodes.
-  nu::int1*           neighbour       = new nu::int1 (3);                                           // Neighbour.
-  nu::int1*           offset          = new nu::int1 (4);                                           // Offset.
-  nu::float1*         theta           = new nu::float1 (5);                                         // Theta.
-  nu::float1*         theta_int       = new nu::float1 (6);                                         // Theta (intermediate value).
-  nu::int4*           state_theta     = new nu::int4 (7);                                           // Random generator state.
-  nu::int4*           state_threshold = new nu::int4 (8);                                           // Random generator state.
-  nu::int1*           max_rejections  = new nu::int1 (9);                                           // Maximum allowed number of rejections.
-  nu::float1*         longitudinal_H  = new nu::float1 (10);                                        // Longitudinal magnetic field.
-  nu::float1*         transverse_H    = new nu::float1 (11);                                        // Transverse magnetic field.
-  nu::float1*         temperature     = new nu::float1 (12);                                        // Temperature.
-  nu::float1*         radial_exponent = new nu::float1 (13);                                        // Radial exponent.
-  nu::int1*           columns         = new nu::int1 (14);                                          // Number of columns in mesh.
-  nu::float1*         spin_z_row_sum  = new nu::float1 (15);                                        // z-spin row summation.
-  nu::float1*         spin_z2_row_sum = new nu::float1 (16);                                        // z-spin square row summation.
-  nu::float1*         ds              = new nu::float1 (17);                                        // Mesh side.
-  nu::float1*         dt              = new nu::float1 (18);                                        // Time step [s].
+  nu::opencl*         cl                = new nu::opencl (nu::GPU);                                 // OpenCL context.
+  nu::kernel*         K0                = new nu::kernel ();                                        // OpenCL kernel array.
+  nu::kernel*         K1                = new nu::kernel ();                                        // OpenCL kernel array.
+  nu::kernel*         K2                = new nu::kernel ();                                        // OpenCL kernel array.
+  nu::kernel*         K3                = new nu::kernel ();                                        // OpenCL kernel array.
+  nu::float4*         color             = new nu::float4 (0);                                       // Color [].
+  nu::float4*         position          = new nu::float4 (1);                                       // Position [m].
+  nu::int1*           central           = new nu::int1 (2);                                         // Central nodes.
+  nu::int1*           neighbour         = new nu::int1 (3);                                         // Neighbour.
+  nu::int1*           offset            = new nu::int1 (4);                                         // Offset.
+  nu::float1*         phi               = new nu::float1 (5);                                       // phi.
+  nu::float1*         phi_int           = new nu::float1 (6);                                       // phi (intermediate value).
+  nu::int4*           state_phi         = new nu::int4 (7);                                         // Random generator state.
+  nu::int4*           state_threshold   = new nu::int4 (8);                                         // Random generator state.
+  nu::int1*           max_rejections    = new nu::int1 (9);                                         // Maximum allowed number of rejections.
+  nu::float1*         c_1_parameter     = new nu::float1 (10);                                      // c_1 parameter.
+  nu::float1*         c_2_parameter     = new nu::float1 (11);                                      // c_2 parameter.
+  nu::float1*         lambda_parameter  = new nu::float1 (12);                                      // lambda parameter.
+  nu::float1*         mu_parameter      = new nu::float1 (13);                                      // mu parameter.
+  nu::float1*         T_parameter       = new nu::float1 (14);                                      // T parameter.
+  nu::float1*         T_hat_parameter   = new nu::float1 (15);                                      // T_hat parameter.
+  nu::float1*         phi_max_parameter = new nu::float1 (16);                                      // phi_max parameter.
+  nu::float1*         radial_exponent   = new nu::float1 (17);                                      // Radial exponent.
+  nu::int1*           columns           = new nu::int1 (18);                                        // Number of columns in mesh.
+  nu::float1*         spin_z_row_sum    = new nu::float1 (19);                                      // z-spin row summation.
+  nu::float1*         spin_z2_row_sum   = new nu::float1 (20);                                      // z-spin square row summation.
+  nu::float1*         ds                = new nu::float1 (21);                                      // Mesh side.
+  nu::float1*         dt                = new nu::float1 (22);                                      // Time step [s].
 
   // IMGUI:
-  nu::imgui*          hud             = new nu::imgui ();                                           // ImGui context.
+  nu::imgui*          hud               = new nu::imgui ();                                         // ImGui context.
 
   // MESH:
-  nu::mesh*           vacuum          = new nu::mesh (MESH);                                        // False vacuum domain.
+  nu::mesh*           vacuum            = new nu::mesh (MESH);                                      // False vacuum domain.
   size_t              nodes;                                                                        // Number of nodes.
   size_t              elements;                                                                     // Number of elements.
   size_t              groups;                                                                       // Number of groups.
@@ -193,11 +197,11 @@ int main ()
   for(i = 0; i < nodes; i++)
   {
     std::cout << "i = " << i << ", node index = " << vacuum->node[i] << ", neighbour indices:";     // Printing message...
-    state_theta->data.push_back ({rand (), rand (), rand (), rand ()});                             // Setting state_sz seed...
+    state_phi->data.push_back ({rand (), rand (), rand (), rand ()});                               // Setting state_sz seed...
     state_threshold->data.push_back ({rand (), rand (), rand (), rand ()});                         // Setting state_th seed...
     color->data.push_back ({0.0f, 1.0f, 0.0f, 1.0f});                                               // Setting node color...
-    theta->data.push_back (theta_angle);                                                            // Setting initial theta...
-    theta_int->data.push_back (0.0f);                                                               // Setting initial theta (intermediate value)...
+    phi->data.push_back (theta_angle);                                                              // Setting initial phi...
+    phi_int->data.push_back (0.0f);                                                                 // Setting initial phi (intermediate value)...
 
     // Computing minimum element offset index:
     if(i == 0)
