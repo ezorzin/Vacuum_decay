@@ -5,16 +5,20 @@ __kernel void thekernel(__global float4*    color,                              
                         __global int*       central,                            // Node.
                         __global int*       nearest,                            // Neighbour.
                         __global int*       offset,                             // Offset. 
-                        __global float*     theta,                              // Theta.  
-                        __global float*     theta_int,                          // Theta (intermediate value). 
-                        __global int4*      state_theta,                        // Random number generator state.
+                        __global float*     phi,                                // phi.  
+                        __global float*     phi_int,                            // phi (intermediate value). 
+                        __global int4*      state_phi,                          // Random number generator state.
                         __global int4*      state_threshold,                    // Random number generator state. 
                         __global int*       max_rejections,                     // Maximum allowed number of rejections. 
-                        __global float*     longitudinal_H,                     // Longitudinal magnetic field.
-                        __global float*     transverse_H,                       // Transverse magnetic field.
-                        __global float*     temperature,                        // Temperature.
+                        __global float*     c_1_parameter,                      // c_1 parameter.
+                        __global float*     c_2_parameter,                      // c_2 parameter.
+                        __global float*     lambda_parameter,                   // lambda parameter.
+                        __global float*     mu_parameter,                       // mu parameter.
+                        __global float*     T_parameter,                        // T parameter.
+                        __global float*     T_hat_parameter,                    // T_hat parameter.
+                        __global float*     phi_max_parameter,                  // phi_max parameter.
                         __global float*     radial_exponent,                    // Radial exponent.
-                        __global int*       columns,                               // Number of columns in mesh.
+                        __global int*       columns,                            // Number of columns in mesh.
                         __global float*     spin_z_row_sum,                     // z-spin row summation.
                         __global float*     spin_z2_row_sum,                    // z-spin square row summation.
                         __global float*     ds_simulation,                      // Mesh side.
@@ -47,8 +51,8 @@ __kernel void thekernel(__global float4*    color,                              
     j_min = offset[i - 1];                                                      // Setting stride minimum (all others)...
   }
 
-  theta[n] = theta_int[n];                                                      // Setting new theta...
-  p.z = 0.05f*sin(theta[n]);                                                    // Setting new z position...
+  phi[n] = phi_int[n];                                                          // Setting new phi...
+  p.z = 0.05f*sin(phi[n]);                                                      // Setting new z position...
   c.xyz = colormap(0.5f*(20.0f*p.z + 1.0f));                                    // Setting color...
   color[n] = c;                                                                 // Updating color...
   position[n] = p;                                                              // Updating position...
