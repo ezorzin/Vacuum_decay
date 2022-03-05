@@ -33,6 +33,7 @@
 #define PHI_INIT      0.0f                                                                          // phi parameter.
 #define PHI_MAX_INIT  0.0f                                                                          // phi_max parameter.
 #define ALPHA_INIT    1.0f                                                                          // Radial exponent.
+#define DATA_POINTS   100                                                                           // Data points for energy profile.
 
 #ifdef __linux__
   #define SHADER_HOME "../../Code/shader/"                                                          // Linux OpenGL shaders directory.
@@ -150,6 +151,12 @@ int main ()
   float               spin_z_stderr = 0.0f;                                                         // Standard error z-spin.
   float               dt_simulation;                                                                // Simulation time step [s].
 
+  // ENERGY PROFILE VARIABLES:
+  std::vector<float>  data_x;
+  std::vector<float>  data_y;
+  float               data_phi      = 0;
+  float               data_V        = 0;
+
   // DATA LOG:
   nu::logfile*        log           = new nu::logfile ();                                           // Log file.
 
@@ -250,6 +257,19 @@ int main ()
   parameter->data.push_back ((float)side_x_nodes);                                                  // Setting number of mesh columns...
   parameter->data.push_back (dx);                                                                   // Setting mesh side...
   parameter->data.push_back (dt_simulation);                                                        // Setting simulation time step...
+
+  // SETTING INITIAL ENERGY PROFILE:
+  data_phi = 0.0f;
+
+  for(i = 0; i < DATA_POINTS; i++)
+  {
+    data_x.push_back (data_phi);
+    data_V    = (1 - pow (mu, 2) + c_1*pow (T, 2))*pow (data_phi, 2) +
+                c_2*T*pow (data_phi, 3) +
+                lambda*pow (data_phi, 4);
+    data_y.push_back (data_V);
+    data_phi += phi_max/(DATA_POINTS - 1);
+  }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////// OPENCL KERNELS INITIALIZATION /////////////////////////////////
@@ -369,8 +389,20 @@ int main ()
       parameter->data[9]  = (float)side_x_nodes;                                                    // Setting number of mesh columns...
       parameter->data[10] = dx;                                                                     // Setting mesh side...
       parameter->data[11] = dt_simulation;                                                          // Setting simulation time step...
-
       cl->write (11);                                                                               // Updating all parameters...
+
+      // UPDATING ENERGY PROFILE:
+      data_phi            = 0.0f;
+
+      for(i = 0; i < DATA_POINTS; i++)
+      {
+        data_x[i] = data_phi;
+        data_V    = (1 - pow (mu, 2) + c_1*pow (T, 2))*pow (data_phi, 2) +
+                    c_2*T*pow (data_phi, 3) +
+                    lambda*pow (data_phi, 4);
+        data_y[i] = data_V;
+        data_phi += phi_max/(DATA_POINTS - 1);
+      }
     }
 
     hud->space (50);
@@ -390,8 +422,20 @@ int main ()
       parameter->data[9]  = (float)side_x_nodes;                                                    // Setting number of mesh columns...
       parameter->data[10] = dx;                                                                     // Setting mesh side...
       parameter->data[11] = dt_simulation;                                                          // Setting simulation time step...
-
       cl->write (11);                                                                               // Updating all parameters...
+
+      // UPDATING ENERGY PROFILE:
+      data_phi            = 0.0f;
+
+      for(i = 0; i < DATA_POINTS; i++)
+      {
+        data_x[i] = data_phi;
+        data_V    = (1 - pow (mu, 2) + c_1*pow (T, 2))*pow (data_phi, 2) +
+                    c_2*T*pow (data_phi, 3) +
+                    lambda*pow (data_phi, 4);
+        data_y[i] = data_V;
+        data_phi += phi_max/(DATA_POINTS - 1);
+      }
 
       // Resetting theta for all nodes:
       for(i = 0; i < nodes; i++)
@@ -428,6 +472,8 @@ int main ()
     }
 
     hud->plot ("spin_z_avg", "<sz>", "stderr(sz)", spin_z_avg, spin_z_stderr, 0.1f);                // Plotting average spin-z and its standard deviation...
+    hud->lineplot ("Energy profile", "phi", "V", data_x, data_y);
+
 
     hud->finish ();                                                                                 // Finishing window...
     hud->end ();                                                                                    // Ending HUD...
