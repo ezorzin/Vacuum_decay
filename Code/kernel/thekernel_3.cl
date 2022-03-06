@@ -9,8 +9,8 @@ __kernel void thekernel(__global float4*    color,                              
                         __global float*     phi_int,                            // phi (intermediate value). 
                         __global int4*      state_phi,                          // Random number generator state.
                         __global int4*      state_threshold,                    // Random number generator state. 
-                        __global float*     spin_z_row_sum,                     // z-spin row summation.
-                        __global float*     spin_z2_row_sum,                    // z-spin square row summation.
+                        __global float*     phi_row_sum,                        // phi row summation.
+                        __global float*     phi2_row_sum,                       // phi square row summation.
                         __global float*     parameter)                          // Parameters.
 {
   ////////////////////////////////////////////////////////////////////////////////
@@ -20,16 +20,16 @@ __kernel void thekernel(__global float4*    color,                              
   uint         j = 0;                                                           // Row stride index.
   uint         j_min = i*(uint)parameter[9];                                    // Row stride minimum index (base on number of columns).
   uint         j_max = (i + 1)*(uint)parameter[9] - 1;                          // Row stride maximum index (base on number of columns).
-  float        spin_z_partial_sum = 0.0f;                                       // z_spin partial summation.
-  float        spin_z2_partial_sum = 0.0f;                                      // z_spin square partial summation.
+  float        phi_partial_sum = 0.0f;                                          // phi partial summation.
+  float        phi2_partial_sum = 0.0f;                                         // phi square partial summation.
 
-  // Summating all z-spin in a row:
+  // Summating all phi in a row:
   for (j = j_min; j < j_max; j++)
   {
-    spin_z_partial_sum += phi[j];                                               // Accumulating z-spin partial summation...
-    spin_z2_partial_sum += pown(phi[j], 2);                                     // Accumulating z-spin square partial summation...
+    phi_partial_sum += phi[j];                                                  // Accumulating phi partial summation...
+    phi2_partial_sum += pown(phi[j], 2);                                        // Accumulating phi square partial summation...
   }
 
-  spin_z_row_sum[i] = spin_z_partial_sum;                                       // Setting z-spin row summation...
-  spin_z2_row_sum[i] = spin_z2_partial_sum;                                     // Setting z-spin square row summation...
+  phi_row_sum[i] = phi_partial_sum;                                             // Setting phi row summation...
+  phi2_row_sum[i] = phi2_partial_sum;                                           // Setting phi square row summation...
 }

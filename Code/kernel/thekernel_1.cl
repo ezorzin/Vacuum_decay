@@ -18,7 +18,7 @@ float E_node(float C_radial, float phi_node, float phi_central)
 {
   float E;                                                                      // Energy.
   
-  E = -(C_radial*sin(phi_node)*sin(phi_central));                               // Computing energy...
+  E = -(C_radial*phi_node*phi_central);                                         // Computing energy...
 
   return E;
 }
@@ -32,8 +32,8 @@ __kernel void thekernel(__global float4*    color,                              
                         __global float*     phi_int,                            // phi (intermediate value). 
                         __global int4*      state_phi,                          // Random number generator state.
                         __global int4*      state_threshold,                    // Random number generator state. 
-                        __global float*     spin_z_row_sum,                     // z-spin row summation.
-                        __global float*     spin_z2_row_sum,                    // z-spin square row summation.
+                        __global float*     phi_row_sum,                        // phi row summation.
+                        __global float*     phi2_row_sum,                       // phi square row summation.
                         __global float*     parameter)                          // Parameters.
 { 
   ////////////////////////////////////////////////////////////////////////////////
@@ -52,8 +52,8 @@ __kernel void thekernel(__global float4*    color,                              
   ////////////////////////////////////////////////////////////////////////////////
   float4       c                 = color[n];                                    // Node color.
   float4       p                 = position[n];                                 // Central node position.
-  uint4        st_phi            = convert_uint4(state_phi[n]);                 // Random generator state.
-  uint4        st_threshold      = convert_uint4(state_threshold[n]);           // Random generator state.
+  uint4        st_ph             = convert_uint4(state_phi[n]);                 // Random generator state.
+  uint4        st_th             = convert_uint4(state_threshold[n]);           // Random generator state.
   uint         m_max             = (uint)parameter[0];                          // Maximum allowed number of rejections.
   float        c_1               = parameter[1];                                // c_1 parameter.
   float        c_2               = parameter[2];                                // c_2 parameter.
@@ -69,11 +69,11 @@ __kernel void thekernel(__global float4*    color,                              
   float4       node              = (float4)(0.0f, 0.0f, 0.0f, 1.0f);            // Neighbour node position.
   float2       link              = (float2)(0.0f, 0.0f);                        // Neighbour link.
   float        L                 = 0.0f;                                        // Neighbour link length.
-  float        D                 = 0.0f;                                        // Distributed random z-spin.
+  float        D                 = 0.0f;                                        // Distributed random phi.
   float        E                 = 0.0f;                                        // Energy function.
   float        En                = 0.0f;                                        // Energy of central node.
-  float        phi_rand          = 0.0f;                                        // Flat random phi.
-  float        threshold_rand    = 0.0f;                                        // Flat random threshold.
+  float        ph_rand           = 0.0f;                                        // Flat random phi.
+  float        th_rand           = 0.0f;                                        // Flat random threshold.
   
   // COMPUTING STRIDE MINIMUM INDEX:
   if (i == 0)
@@ -88,10 +88,10 @@ __kernel void thekernel(__global float4*    color,                              
   // COMPUTING RANDOM Z-SPIN FROM DISTRIBUTION (rejection sampling):
   do
   {
-    phi_rand = uint_to_float(xoshiro128pp(&st_phi), 0.0f, phi_max);             // Generating random theta (flat distribution)...
-    threshold_rand = uint_to_float(xoshiro128pp(&st_threshold), 0.0f, +1.0f);   // Generating random threshold (flat distribution)...
+    ph_rand = uint_to_float(xoshiro128pp(&st_ph), 0.0f, phi_max);               // Generating random theta (flat distribution)...
+    th_rand = uint_to_float(xoshiro128pp(&st_th), 0.0f, +1.0f);                 // Generating random threshold (flat distribution)...
     En = E_central(c_1, c_2, lambda, mu, T, phi[n]);                            // Computing central energy term on central theta...
-    E = E_central(c_1, c_2, lambda, mu, T, phi_rand);                           // Computing central energy term on random theta...
+    E = E_central(c_1, c_2, lambda, mu, T, ph_rand);                            // Computing central energy term on random theta...
 
     // COMPUTING ENERGY:
     for (j = j_min; j < j_max; j++)
@@ -111,16 +111,16 @@ __kernel void thekernel(__global float4*    color,                              
         L = sqrt(2.0f)*ds;
       }
       
-      En += E_node(0.5f/pow(L/ds, alpha), phi[k], phi[n]);                      // Accumulating neighbour energy terms on central z-spin...
-      E += E_node(0.5f/pow(L/ds, alpha), phi[k], phi_rand);                     // Accumulating neighbour energy terms on random z-spin...          
+      En += E_node(0.5f/pow(L/ds, alpha), phi[k], phi[n]);                      // Accumulating neighbour energy terms on central phi...
+      E += E_node(0.5f/pow(L/ds, alpha), phi[k], ph_rand);                      // Accumulating neighbour energy terms on random phi...          
     }
     
-    D = 1.0f/(1.0f + exp((E - En)/T_hat));                                      // Computing new z-spin candidate from distribution...
+    D = 1.0f/(1.0f + exp((E - En)/T_hat));                                      // Computing new phi candidate from distribution...
     m++;                                                                        // Updating rejection index...
   }
-  while ((threshold_rand > D) && (m < m_max));                                  // Evaluating new z-spin candidate (discarding if not found before m_max iterations)...
+  while ((th_rand > D) && (m < m_max));                                         // Evaluating new phi candidate (discarding if not found before m_max iterations)...
 
-  phi_int[n] = phi_rand;                                                        // Setting new z-spin (intermediate value)...
-  state_phi[n] = convert_int4(st_phi);                                          // Updating random generator state...
-  state_threshold[n] = convert_int4(st_threshold);                              // Updating random generator state...
+  phi_int[n] = ph_rand;                                                         // Setting new phi (intermediate value)...
+  state_phi[n] = convert_int4(st_ph);                                           // Updating random generator state...
+  state_threshold[n] = convert_int4(st_th);                                     // Updating random generator state...
 }

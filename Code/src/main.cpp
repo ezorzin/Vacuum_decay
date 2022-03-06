@@ -111,8 +111,8 @@ int main ()
   nu::float1*         phi_int         = new nu::float1 (6);                                         // phi (intermediate value).
   nu::int4*           state_phi       = new nu::int4 (7);                                           // Random generator state.
   nu::int4*           state_threshold = new nu::int4 (8);                                           // Random generator state.
-  nu::float1*         spin_z_row_sum  = new nu::float1 (9);                                         // z-spin row summation.
-  nu::float1*         spin_z2_row_sum = new nu::float1 (10);                                        // z-spin square row summation.
+  nu::float1*         phi_row_sum     = new nu::float1 (9);                                         // phi row summation.
+  nu::float1*         phi2_row_sum    = new nu::float1 (10);                                        // phi square row summation.
   nu::float1*         parameter       = new nu::float1 (11);                                        // Parameters array.
 
   // IMGUI:
@@ -130,35 +130,35 @@ int main ()
   size_t              side_x_nodes;                                                                 // Number of nodes in "x" direction [#].
   size_t              side_y_nodes;                                                                 // Number of nodes in "x" direction [#].
   size_t              border_nodes;                                                                 // Number of border nodes.
-  float               x_min         = -1.0f;                                                        // "x_min" spatial boundary [m].
-  float               x_max         = +1.0f;                                                        // "x_max" spatial boundary [m].
-  float               y_min         = -1.0f;                                                        // "y_min" spatial boundary [m].
-  float               y_max         = +1.0f;                                                        // "y_max" spatial boundary [m].
+  float               x_min      = -1.0f;                                                           // "x_min" spatial boundary [m].
+  float               x_max      = +1.0f;                                                           // "x_max" spatial boundary [m].
+  float               y_min      = -1.0f;                                                           // "y_min" spatial boundary [m].
+  float               y_max      = +1.0f;                                                           // "y_max" spatial boundary [m].
   float               dx;                                                                           // x-axis mesh spatial size [m].
   float               dy;                                                                           // y-axis mesh spatial size [m].
 
   // SIMULATION VARIABLES:
-  float               c_1           = C1_INIT;                                                      // c_1 parameter.
-  float               c_2           = C2_INIT;                                                      // c_2 parameter.
-  float               lambda        = LAMBDA_INIT;                                                  // lambda parameter.
-  float               mu            = MU_INIT;                                                      // mu parameter.
-  float               T             = T_INIT;                                                       // T parameter.
-  float               T_hat         = T_HAT_INIT;                                                   // T_hat parameter.
-  float               phi_start     = PHI_INIT;                                                     // phi parameter.
-  float               phi_max       = PHI_MAX_INIT;                                                 // phi_max.
-  float               alpha         = ALPHA_INIT;                                                   // Radial exponent.
-  float               spin_z_avg    = 0.0f;                                                         // Average z-spin.
-  float               spin_z_stderr = 0.0f;                                                         // Standard error z-spin.
+  float               c_1        = C1_INIT;                                                         // c_1 parameter.
+  float               c_2        = C2_INIT;                                                         // c_2 parameter.
+  float               lambda     = LAMBDA_INIT;                                                     // lambda parameter.
+  float               mu         = MU_INIT;                                                         // mu parameter.
+  float               T          = T_INIT;                                                          // T parameter.
+  float               T_hat      = T_HAT_INIT;                                                      // T_hat parameter.
+  float               phi_start  = PHI_INIT;                                                        // phi parameter.
+  float               phi_max    = PHI_MAX_INIT;                                                    // phi_max.
+  float               alpha      = ALPHA_INIT;                                                      // Radial exponent.
+  float               phi_avg    = 0.0f;                                                            // Average phi.
+  float               phi_stderr = 0.0f;                                                            // Standard error phi.
   float               dt_simulation;                                                                // Simulation time step [s].
 
   // ENERGY PROFILE VARIABLES:
   std::vector<float>  data_x;
   std::vector<float>  data_y;
-  float               data_phi      = 0;
-  float               data_V        = 0;
+  float               data_phi   = 0;
+  float               data_V     = 0;
 
   // DATA LOG:
-  nu::logfile*        log           = new nu::logfile ();                                           // Log file.
+  nu::logfile*        log        = new nu::logfile ();                                              // Log file.
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////// DATA INITIALIZATION //////////////////////////////////////
@@ -229,8 +229,8 @@ int main ()
 
   for(i = 0; i < side_y_nodes; i++)
   {
-    spin_z_row_sum->data.push_back (0.0f);                                                          // Resetting z-spin row summation...
-    spin_z2_row_sum->data.push_back (0.0f);                                                         // Resetting z-spin square row summation...
+    phi_row_sum->data.push_back (0.0f);                                                             // Resetting phi row summation...
+    phi2_row_sum->data.push_back (0.0f);                                                            // Resetting phi square row summation...
   }
 
   // MESH BORDER:
@@ -264,9 +264,11 @@ int main ()
   for(i = 0; i < DATA_POINTS; i++)
   {
     data_x.push_back (data_phi);
-    data_V    = (1 - pow (mu, 2) + c_1*pow (T, 2))*pow (data_phi, 2) +
-                c_2*T*pow (data_phi, 3) +
-                lambda*pow (data_phi, 4);
+    data_V    = (float)(
+                        (1 - pow (mu, 2) + c_1*pow (T, 2))*pow (data_phi, 2) +
+                        c_2*T*pow (data_phi, 3) +
+                        lambda*pow (data_phi, 4)
+                       );
     data_y.push_back (data_V);
     data_phi += phi_max/(DATA_POINTS - 1);
   }
@@ -330,26 +332,26 @@ int main ()
     cl->execute (K2, nu::WAIT);                                                                     // Executing OpenCL kernel...
     cl->execute (K3, nu::WAIT);                                                                     // Executing OpenCL kernel...
     cl->release ();                                                                                 // Releasing OpenCL kernel...
-    cl->read (9);                                                                                   // Reading spin_z_row_sum...
-    cl->read (10);                                                                                  // Reading spin_z2_row_sum...
+    cl->read (9);                                                                                   // Reading phi_row_sum...
+    cl->read (10);                                                                                  // Reading phi2_row_sum...
 
-    spin_z_avg    = 0.0f;                                                                           // Resetting z-spin average...
-    spin_z_stderr = 0.0f;                                                                           // Resetting z-spin standard error...
+    phi_avg    = 0.0f;                                                                              // Resetting phi average...
+    phi_stderr = 0.0f;                                                                              // Resetting phi standard error...
 
     for(i = 0; i < side_y_nodes; i++)
     {
-      spin_z_avg    += spin_z_row_sum->data[i];                                                     // Summating spin_z_row_sum by columns...
-      spin_z_stderr += spin_z2_row_sum->data[i];                                                    // Summating spin_z2_row_sum by columns...
+      phi_avg    += phi_row_sum->data[i];                                                           // Summating phi_row_sum by columns...
+      phi_stderr += phi2_row_sum->data[i];                                                          // Summating phi2_row_sum by columns...
     }
 
-    spin_z_avg   /= nodes;                                                                          // Computing z-spin average...
-    spin_z_stderr = (float)sqrt (spin_z_stderr/nodes - pow (spin_z_avg, 2))/(float)sqrt (nodes);    // Computing z-spin standard deviation...
+    phi_avg   /= nodes;                                                                             // Computing phi average...
+    phi_stderr = (float)sqrt (phi_stderr/nodes - pow (phi_avg, 2))/(float)sqrt (nodes);             // Computing phi standard deviation...
 
     log->write (time_index);                                                                        // Logging data...
     log->write ("\t\t");                                                                            // Logging data...
-    log->write (spin_z_avg);                                                                        // Logging data...
+    log->write (phi_avg);                                                                           // Logging data...
     log->write ("\t\t");                                                                            // Logging data...
-    log->write (spin_z_stderr);                                                                     // Logging data...
+    log->write (phi_stderr);                                                                        // Logging data...
     log->write ("\t\t");                                                                            // Logging data...
     log->write (trial_index);                                                                       // Logging data...
     log->endline ();                                                                                // Ending log line...
@@ -397,9 +399,11 @@ int main ()
       for(i = 0; i < DATA_POINTS; i++)
       {
         data_x[i] = data_phi;
-        data_V    = (1 - pow (mu, 2) + c_1*pow (T, 2))*pow (data_phi, 2) +
-                    c_2*T*pow (data_phi, 3) +
-                    lambda*pow (data_phi, 4);
+        data_V    = (float)(
+                            (1 - pow (mu, 2) + c_1*pow (T, 2))*pow (data_phi, 2) +
+                            c_2*T*pow (data_phi, 3) +
+                            lambda*pow (data_phi, 4)
+                           );
         data_y[i] = data_V;
         data_phi += phi_max/(DATA_POINTS - 1);
       }
@@ -430,9 +434,11 @@ int main ()
       for(i = 0; i < DATA_POINTS; i++)
       {
         data_x[i] = data_phi;
-        data_V    = (1 - pow (mu, 2) + c_1*pow (T, 2))*pow (data_phi, 2) +
-                    c_2*T*pow (data_phi, 3) +
-                    lambda*pow (data_phi, 4);
+        data_V    = (float)(
+                            (1 - pow (mu, 2) + c_1*pow (T, 2))*pow (data_phi, 2) +
+                            c_2*T*pow (data_phi, 3) +
+                            lambda*pow (data_phi, 4)
+                           );
         data_y[i] = data_V;
         data_phi += phi_max/(DATA_POINTS - 1);
       }
@@ -440,7 +446,7 @@ int main ()
       // Resetting theta for all nodes:
       for(i = 0; i < nodes; i++)
       {
-        phi->data[i]     = PHI_INIT;                                                                // Setting initial phi...
+        phi->data[i]     = phi_start;                                                               // Setting initial phi...
         phi_int->data[i] = 0.0f;                                                                    // Setting initial phi (intermediate value)...
       }
 
@@ -471,7 +477,7 @@ int main ()
       gl->close ();                                                                                 // Closing gl...
     }
 
-    hud->plot ("phi_avg", "<phi>", "stderr(phi)", spin_z_avg, spin_z_stderr, 0.1f);                 // Plotting average spin-z and its standard deviation...
+    hud->plot ("phi_avg", "<phi>", "stderr(phi)", phi_avg, phi_stderr, 0.1f);                       // Plotting average spin-z and its standard deviation...
     hud->lineplot ("Energy profile", "phi", "V", data_x, data_y);
 
 
@@ -503,8 +509,8 @@ int main ()
   delete phi_int;                                                                                   // Deleting theta (intermediate)...
   delete state_phi;                                                                                 // Deleting random generator state...
   delete state_threshold;                                                                           // Deleting random generator state...
-  delete spin_z_row_sum;                                                                            // Deleting z-spin row summation.
-  delete spin_z2_row_sum;                                                                           // Deleting z-spin square row summation.
+  delete phi_row_sum;                                                                               // Deleting phi row summation.
+  delete phi2_row_sum;                                                                              // Deleting phi square row summation.
   delete parameter;                                                                                 // Deleting all parameters...
   delete K0;                                                                                        // Deleting OpenCL kernel...
   delete K1;                                                                                        // Deleting OpenCL kernel...

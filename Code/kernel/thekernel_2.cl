@@ -9,8 +9,8 @@ __kernel void thekernel(__global float4*    color,                              
                         __global float*     phi_int,                            // phi (intermediate value). 
                         __global int4*      state_phi,                          // Random number generator state.
                         __global int4*      state_threshold,                    // Random number generator state. 
-                        __global float*     spin_z_row_sum,                     // z-spin row summation.
-                        __global float*     spin_z2_row_sum,                    // z-spin square row summation.
+                        __global float*     phi_row_sum,                        // phi row summation.
+                        __global float*     phi2_row_sum,                       // phi square row summation.
                         __global float*     parameter)                          // Parameters.
 { 
   ////////////////////////////////////////////////////////////////////////////////

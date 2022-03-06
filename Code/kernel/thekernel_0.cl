@@ -10,8 +10,8 @@ __kernel void thekernel(__global float4*    color,                              
                         __global float*     phi_int,                            // phi (intermediate value). 
                         __global int4*      state_phi,                          // Random number generator state.
                         __global int4*      state_threshold,                    // Random number generator state. 
-                        __global float*     spin_z_row_sum,                     // z-spin row summation.
-                        __global float*     spin_z2_row_sum,                    // z-spin square row summation.
+                        __global float*     phi_row_sum,                        // phi row summation.
+                        __global float*     phi2_row_sum,                       // phi square row summation.
                         __global float*     parameter)                          // Parameters.
 { 
   ////////////////////////////////////////////////////////////////////////////////
@@ -29,17 +29,18 @@ __kernel void thekernel(__global float4*    color,                              
   ////////////////////////////////////////////////////////////////////////////////
   //////////////////////////////// RANDOM GENERATOR //////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////
-  float        sz_rand           = 0.0f;                                        // Flat tandom z-spin.
+  float        ph_rand           = 0.0f;                                        // Flat random phi.
   float        th_rand           = 0.0f;                                        // Flat random threshold.
-  uint4        st_sz             = convert_uint4(state_phi[n]);                 // Random generator state.
+  uint4        st_ph             = convert_uint4(state_phi[n]);                 // Random generator state.
   uint4        st_th             = convert_uint4(state_threshold[n]);           // Random generator state.
+  float        phi_max           = parameter[7];                                // phi_max.
 
   // RAMPING UP RANDOM GENERATORS:
   for (r = 0; r < RAMP_UP_CYCLES; r++)
   {
-    sz_rand = uint_to_float(xoshiro128pp(&st_sz), -1.0f, +1.0f);                // Generating random z-spin (flat distribution)...
+    ph_rand = uint_to_float(xoshiro128pp(&st_ph), 0.0f, phi_max);               // Generating random phi (flat distribution)...
     th_rand = uint_to_float(xoshiro128pp(&st_th), 0.0f, +1.0f);                 // Generating random threshold (flat distribution)...  
-    state_phi[n] = convert_int4(st_sz);                                         // Updating random generator state...
+    state_phi[n] = convert_int4(st_ph);                                         // Updating random generator state...
     state_threshold[n] = convert_int4(st_th);                                   // Updating random generator state...
   }
 }
