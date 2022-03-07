@@ -29,7 +29,7 @@ __kernel void thekernel(__global float4*    color,                              
   ////////////////////////////////////////////////////////////////////////////////
   float4       p                 = position[n];                                 // Central node position.
   float4       c                 = color[n];                                    // Node color.
-  float        phi_max           = parameter[7];                                // phi_max parameter.
+  float        phi_max           = parameter[0];                                // phi_max parameter.
  
   // COMPUTING STRIDE MINIMUM INDEX:
   if (i == 0)

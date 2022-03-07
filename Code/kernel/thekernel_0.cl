@@ -33,7 +33,7 @@ __kernel void thekernel(__global float4*    color,                              
   float        th_rand           = 0.0f;                                        // Flat random threshold.
   uint4        st_ph             = convert_uint4(state_phi[n]);                 // Random generator state.
   uint4        st_th             = convert_uint4(state_threshold[n]);           // Random generator state.
-  float        phi_max           = parameter[7];                                // phi_max.
+  float        phi_max           = parameter[0];                                // phi_max.
 
   // RAMPING UP RANDOM GENERATORS:
   for (r = 0; r < RAMP_UP_CYCLES; r++)

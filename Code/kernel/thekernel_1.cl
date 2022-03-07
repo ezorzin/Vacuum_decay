@@ -54,18 +54,19 @@ __kernel void thekernel(__global float4*    color,                              
   float4       p                 = position[n];                                 // Central node position.
   uint4        st_ph             = convert_uint4(state_phi[n]);                 // Random generator state.
   uint4        st_th             = convert_uint4(state_threshold[n]);           // Random generator state.
-  uint         m_max             = (uint)parameter[0];                          // Maximum allowed number of rejections.
-  float        c_1               = parameter[1];                                // c_1 parameter.
-  float        c_2               = parameter[2];                                // c_2 parameter.
-  float        lambda            = parameter[3];                                // lambda parameter.
-  float        mu                = parameter[4];                                // mu parameter.
-  float        T                 = parameter[5];                                // T parameter.
-  float        T_hat             = parameter[6];                                // T_hat parameter.
-  float        phi_max           = parameter[7];                                // phi_max parameter.
-  float        alpha             = parameter[8];                                // Radial exponent.
-  uint         columns           = (uint)parameter[9];                          // Number of columns.
-  float        ds                = parameter[10];                               // Simulation space step.
-  float        dt                = parameter[11];                               // Simulation time step [s].
+  float        phi_max           = parameter[0];                                // phi_max parameter.
+  float        K                 = parameter[1];                                // Radial parameter.
+  float        alpha             = parameter[2];                                // Radial exponent.
+  float        c_1               = parameter[3];                                // c_1 parameter.
+  float        c_2               = parameter[4];                                // c_2 parameter.
+  float        mu                = parameter[5];                                // mu parameter.
+  float        lambda            = parameter[6];                                // lambda parameter.
+  float        T                 = parameter[7];                                // T parameter.
+  float        T_hat             = parameter[8];                                // T_hat parameter.
+  uint         m_max             = (uint)parameter[9];                          // Maximum allowed number of rejections.
+  uint         columns           = (uint)parameter[10];                         // Number of columns.
+  float        ds                = parameter[11];                               // Simulation space step.
+  float        dt                = parameter[12];                               // Simulation time step [s].
   float4       node              = (float4)(0.0f, 0.0f, 0.0f, 1.0f);            // Neighbour node position.
   float2       link              = (float2)(0.0f, 0.0f);                        // Neighbour link.
   float        L                 = 0.0f;                                        // Neighbour link length.
@@ -83,6 +84,12 @@ __kernel void thekernel(__global float4*    color,                              
   else
   {
     j_min = offset[i - 1];                                                      // Setting stride minimum (all others)...
+  }
+
+  // FIXING MAXIMUM REJECTIONS:
+  if(m_max < 1)
+  {
+    m_max = 1;                                                                  // Avoiding zero or negative maximum rejections...
   }
 
   // COMPUTING RANDOM PHI FROM DISTRIBUTION (rejection sampling):

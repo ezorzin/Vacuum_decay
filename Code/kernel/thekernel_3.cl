@@ -18,8 +18,8 @@ __kernel void thekernel(__global float4*    color,                              
   ////////////////////////////////////////////////////////////////////////////////
   uint         i = get_global_id(0);                                            // Global index [#].
   uint         j = 0;                                                           // Row stride index.
-  uint         j_min = i*(uint)parameter[9];                                    // Row stride minimum index (base on number of columns).
-  uint         j_max = (i + 1)*(uint)parameter[9] - 1;                          // Row stride maximum index (base on number of columns).
+  uint         j_min = i*(uint)parameter[10];                                   // Row stride minimum index (based on number of columns).
+  uint         j_max = (i + 1)*(uint)parameter[10] - 1;                         // Row stride maximum index (based on number of columns).
   float        phi_partial_sum = 0.0f;                                          // phi partial summation.
   float        phi2_partial_sum = 0.0f;                                         // phi square partial summation.
 
