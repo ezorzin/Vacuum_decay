@@ -24,14 +24,14 @@
 #define CELL_VERTICES 4                                                                             // Number of vertices per elementary cell.
 
 #define M_MAX         100                                                                           // Maximum allowed number of rejections.
-#define C1_INIT       0.0f                                                                          // c_1 parameter.
-#define C2_INIT       0.0f                                                                          // c_2 parameter.
-#define LAMBDA_INIT   0.0f                                                                          // lambda parameter.
+#define C1_INIT       1.0f                                                                          // c_1 parameter.
+#define C2_INIT       -2.1f                                                                         // c_2 parameter.
+#define LAMBDA_INIT   1.0f                                                                          // lambda parameter.
 #define MU_INIT       0.0f                                                                          // mu parameter.
-#define T_INIT        0.0f                                                                          // T parameter.
-#define T_HAT_INIT    0.0f                                                                          // T_hat parameter.
+#define T_INIT        1.0f                                                                          // T parameter.
+#define T_HAT_INIT    0.08f                                                                         // T_hat parameter.
 #define PHI_INIT      0.0f                                                                          // phi parameter.
-#define PHI_MAX_INIT  0.0f                                                                          // phi_max parameter.
+#define PHI_MAX_INIT  1.5f                                                                          // phi_max parameter.
 #define ALPHA_INIT    1.0f                                                                          // Radial exponent.
 #define DATA_POINTS   100                                                                           // Data points for energy profile.
 
@@ -265,7 +265,7 @@ int main ()
   {
     data_x.push_back (data_phi);
     data_V    = (float)(
-                        (1 - pow (mu, 2) + c_1*pow (T, 2))*pow (data_phi, 2) +
+                        (-pow (mu, 2) + c_1*pow (T, 2))*pow (data_phi, 2) +
                         c_2*T*pow (data_phi, 3) +
                         lambda*pow (data_phi, 4)
                        );
@@ -400,7 +400,7 @@ int main ()
       {
         data_x[i] = data_phi;
         data_V    = (float)(
-                            (1 - pow (mu, 2) + c_1*pow (T, 2))*pow (data_phi, 2) +
+                            (-pow (mu, 2) + c_1*pow (T, 2))*pow (data_phi, 2) +
                             c_2*T*pow (data_phi, 3) +
                             lambda*pow (data_phi, 4)
                            );
@@ -435,7 +435,7 @@ int main ()
       {
         data_x[i] = data_phi;
         data_V    = (float)(
-                            (1 - pow (mu, 2) + c_1*pow (T, 2))*pow (data_phi, 2) +
+                            (-pow (mu, 2) + c_1*pow (T, 2))*pow (data_phi, 2) +
                             c_2*T*pow (data_phi, 3) +
                             lambda*pow (data_phi, 4)
                            );

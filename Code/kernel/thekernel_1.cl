@@ -6,7 +6,7 @@ float E_central(float c_1, float c_2, float lambda, float mu, float T, float phi
   float E;                                                                      // Energy.
   
   // Computing energy:
-  E = (1 - pown(mu, 2) + c_1*pown(T, 2))*pown(phi_central, 2) + 
+  E = (-pown(mu, 2) + c_1*pown(T, 2))*pown(phi_central, 2) + 
       (c_2*T)*pown(phi_central, 3) + 
       lambda*pown(phi_central, 4);                         
 
@@ -18,7 +18,7 @@ float E_node(float C_radial, float phi_node, float phi_central)
 {
   float E;                                                                      // Energy.
   
-  E = -(C_radial*phi_node*phi_central);                                         // Computing energy...
+  E = C_radial*pown(phi_node - phi_central, 2);                                 // Computing energy...
 
   return E;
 }
@@ -85,7 +85,7 @@ __kernel void thekernel(__global float4*    color,                              
     j_min = offset[i - 1];                                                      // Setting stride minimum (all others)...
   }
 
-  // COMPUTING RANDOM Z-SPIN FROM DISTRIBUTION (rejection sampling):
+  // COMPUTING RANDOM PHI FROM DISTRIBUTION (rejection sampling):
   do
   {
     ph_rand = uint_to_float(xoshiro128pp(&st_ph), 0.0f, phi_max);               // Generating random theta (flat distribution)...
@@ -120,7 +120,16 @@ __kernel void thekernel(__global float4*    color,                              
   }
   while ((th_rand > D) && (m < m_max));                                         // Evaluating new phi candidate (discarding if not found before m_max iterations)...
 
-  phi_int[n] = ph_rand;                                                         // Setting new phi (intermediate value)...
+  // EVALUATING REJECTION SAMPLING RESULT:
+  if(m < m_max)
+  {
+    phi_int[n] = ph_rand;                                                       // Setting new phi (intermediate value)...
+  }
+  else
+  {
+    phi_int[n] = phi[n];                                                        // Keeping current phi (intermediate value)...
+  }
+  
   state_phi[n] = convert_int4(st_ph);                                           // Updating random generator state...
   state_threshold[n] = convert_int4(st_th);                                     // Updating random generator state...
 }
