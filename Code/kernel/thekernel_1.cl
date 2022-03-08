@@ -34,6 +34,7 @@ __kernel void thekernel(__global float4*    color,                              
                         __global int4*      state_threshold,                    // Random number generator state. 
                         __global float*     phi_row_sum,                        // phi row summation.
                         __global float*     phi2_row_sum,                       // phi square row summation.
+                        __global int*       m_overflow,                         // Rejection sampling overflow.
                         __global float*     parameter)                          // Parameters.
 { 
   ////////////////////////////////////////////////////////////////////////////////
@@ -131,10 +132,12 @@ __kernel void thekernel(__global float4*    color,                              
   if(m < m_max)
   {
     phi_int[n] = ph_rand;                                                       // Setting new phi (intermediate value)...
+    m_overflow[n] = 0;                                                          // Resetting rejection sampling overflow...
   }
   else
   {
     phi_int[n] = phi[n];                                                        // Keeping current phi (intermediate value)...
+    m_overflow[n] = 1;                                                          // Setting rejection sampling overflow...
   }
   
   state_phi[n] = convert_int4(st_ph);                                           // Updating random generator state...

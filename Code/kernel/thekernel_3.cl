@@ -11,6 +11,7 @@ __kernel void thekernel(__global float4*    color,                              
                         __global int4*      state_threshold,                    // Random number generator state. 
                         __global float*     phi_row_sum,                        // phi row summation.
                         __global float*     phi2_row_sum,                       // phi square row summation.
+                        __global int*       m_overflow,                         // Rejection sampling overflow.
                         __global float*     parameter)                          // Parameters.
 {
   ////////////////////////////////////////////////////////////////////////////////
@@ -22,14 +23,17 @@ __kernel void thekernel(__global float4*    color,                              
   uint         j_max = (i + 1)*(uint)parameter[10] - 1;                         // Row stride maximum index (based on number of columns).
   float        phi_partial_sum = 0.0f;                                          // phi partial summation.
   float        phi2_partial_sum = 0.0f;                                         // phi square partial summation.
+  int          m_overflow_partial_sum = 0;                                      // Rejection sampling overflow partial summation.
 
   // Summating all phi in a row:
   for (j = j_min; j < j_max; j++)
   {
     phi_partial_sum += phi[j];                                                  // Accumulating phi partial summation...
     phi2_partial_sum += pown(phi[j], 2);                                        // Accumulating phi square partial summation...
+    m_overflow_partial_sum += m_overflow[j];                                    // Accumulating rejection sampling partial overflows...
   }
 
   phi_row_sum[i] = phi_partial_sum;                                             // Setting phi row summation...
   phi2_row_sum[i] = phi2_partial_sum;                                           // Setting phi square row summation...
+  m_overflow[j]
 }

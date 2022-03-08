@@ -12,6 +12,7 @@ __kernel void thekernel(__global float4*    color,                              
                         __global int4*      state_threshold,                    // Random number generator state. 
                         __global float*     phi_row_sum,                        // phi row summation.
                         __global float*     phi2_row_sum,                       // phi square row summation.
+                        __global int*       m_overflow,                         // Rejection sampling overflow.
                         __global float*     parameter)                          // Parameters.
 { 
   ////////////////////////////////////////////////////////////////////////////////
