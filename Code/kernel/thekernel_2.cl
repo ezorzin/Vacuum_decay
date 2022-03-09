@@ -12,6 +12,7 @@ __kernel void thekernel(__global float4*    color,                              
                         __global float*     phi_row_sum,                        // phi row summation.
                         __global float*     phi2_row_sum,                       // phi square row summation.
                         __global int*       m_overflow,                         // Rejection sampling overflow.
+                        __global int*       m_overflow_sum,                     // Rejection sampling overflow sum.
                         __global float*     parameter)                          // Parameters.
 { 
   ////////////////////////////////////////////////////////////////////////////////

@@ -12,6 +12,7 @@ __kernel void thekernel(__global float4*    color,                              
                         __global float*     phi_row_sum,                        // phi row summation.
                         __global float*     phi2_row_sum,                       // phi square row summation.
                         __global int*       m_overflow,                         // Rejection sampling overflow.
+                        __global int*       m_overflow_sum,                     // Rejection sampling overflow sum.
                         __global float*     parameter)                          // Parameters.
 {
   ////////////////////////////////////////////////////////////////////////////////
@@ -35,5 +36,5 @@ __kernel void thekernel(__global float4*    color,                              
 
   phi_row_sum[i] = phi_partial_sum;                                             // Setting phi row summation...
   phi2_row_sum[i] = phi2_partial_sum;                                           // Setting phi square row summation...
-  m_overflow[j]
+  m_overflow_sum[i] = m_overflow_partial_sum;                                   // Setting rejection sampling overflow row summation...
 }
