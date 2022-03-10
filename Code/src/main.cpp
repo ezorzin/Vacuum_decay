@@ -1,69 +1,73 @@
 /// @file
 
-#define INTEROP       true                                                                          // "true" = use OpenGL-OpenCL interoperability.
-#define SX            800                                                                           // Window x-size [px].
-#define SY            600                                                                           // Window y-size [px].
-#define NM            "Neutrino - Vacuum decay"                                                     // Window name.
-#define OX            0.0f                                                                          // x-axis orbit initial rotation.
-#define OY            0.0f                                                                          // y-axis orbit initial rotation.
-#define PX            0.0f                                                                          // x-axis pan initial translation.
-#define PY            0.0f                                                                          // y-axis pan initial translation.
-#define PZ            -2.0f                                                                         // z-axis pan initial translation.
+#define INTEROP            true                                                                     // "true" = use OpenGL-OpenCL interoperability.
+#define SX                 800                                                                      // Window x-size [px].
+#define SY                 600                                                                      // Window y-size [px].
+#define NM                 "Neutrino - Vacuum decay"                                                // Window name.
+#define OX                 0.0f                                                                     // x-axis orbit initial rotation.
+#define OY                 0.0f                                                                     // y-axis orbit initial rotation.
+#define PX                 0.0f                                                                     // x-axis pan initial translation.
+#define PY                 0.0f                                                                     // y-axis pan initial translation.
+#define PZ                 -2.0f                                                                    // z-axis pan initial translation.
 
-#define SURFACE_TAG   1                                                                             // Surface tag.
-#define BORDER_TAG    9                                                                             // Border tag.
-#define SIDE_X_TAG    10                                                                            // Side "x" tag.
-#define SIDE_Y_TAG    11                                                                            // Side "y" tag.
-#define CURVE_DIM     1                                                                             // Curve dimension.
-#define SURFACE_DIM   2                                                                             // Surface dimension.
-#define BORDER_DIM    1                                                                             // Border dimension.
-#define SIDE_X_DIM    1                                                                             // Side "x" dimension.
-#define SIDE_Y_DIM    1                                                                             // Side "y" dimension.
-#define DS            0.05f                                                                         // vacuum elementary cell side.
-#define EPSILON       0.01f                                                                         // Tolerance for cell detection.
-#define CELL_VERTICES 4                                                                             // Number of vertices per elementary cell.
+#define SURFACE_TAG        1                                                                        // Surface tag.
+#define BORDER_TAG         9                                                                        // Border tag.
+#define SIDE_X_TAG         10                                                                       // Side "x" tag.
+#define SIDE_Y_TAG         11                                                                       // Side "y" tag.
+#define CURVE_DIM          1                                                                        // Curve dimension.
+#define SURFACE_DIM        2                                                                        // Surface dimension.
+#define BORDER_DIM         1                                                                        // Border dimension.
+#define SIDE_X_DIM         1                                                                        // Side "x" dimension.
+#define SIDE_Y_DIM         1                                                                        // Side "y" dimension.
+#define DS                 0.05f                                                                    // vacuum elementary cell side.
+#define EPSILON            0.01f                                                                    // Tolerance for cell detection.
+#define CELL_VERTICES      4                                                                        // Number of vertices per elementary cell.
 
-#define M_MAX         100                                                                           // Maximum allowed number of rejections.
-#define K_INIT        0.5f                                                                          // Radial parameter.
-#define C1_INIT       1.0f                                                                          // c_1 parameter.
-#define C2_INIT       -2.1f                                                                         // c_2 parameter.
-#define LAMBDA_INIT   1.0f                                                                          // lambda parameter.
-#define MU_INIT       0.0f                                                                          // mu parameter.
-#define T_INIT        1.0f                                                                          // T parameter.
-#define T_HAT_INIT    0.08f                                                                         // T_hat parameter.
-#define PHI_INIT      0.0f                                                                          // phi parameter.
-#define PHI_MAX_INIT  1.5f                                                                          // phi_max parameter.
-#define ALPHA_INIT    1.0f                                                                          // Radial exponent.
-#define DATA_POINTS   100                                                                           // Data points for energy profile.
+#define M_MAX              100                                                                      // Maximum allowed number of rejections.
+#define K_INIT             0.5f                                                                     // Radial parameter.
+#define C1_INIT            1.0f                                                                     // c_1 parameter.
+#define C2_INIT            -2.1f                                                                    // c_2 parameter.
+#define LAMBDA_INIT        1.0f                                                                     // lambda parameter.
+#define MU_INIT            0.0f                                                                     // mu parameter.
+#define T_INIT             1.0f                                                                     // T parameter.
+#define T_HAT_INIT         0.08f                                                                    // T_hat parameter.
+#define PHI_INIT           0.0f                                                                     // phi parameter.
+#define PHI_MAX_INIT       1.5f                                                                     // phi_max parameter.
+#define ALPHA_INIT         1.0f                                                                     // Radial exponent.
+#define DATA_POINTS        100                                                                      // Data points for energy profile.
 
 #ifdef __linux__
-  #define SHADER_HOME "../../Code/shader/"                                                          // Linux OpenGL shaders directory.
-  #define KERNEL_HOME "../../Code/kernel/"                                                          // Linux OpenCL kernels directory.
-  #define GMSH_HOME   "../../Code/mesh/"                                                            // Linux GMSH mesh directory.
-  #define LOG_HOME    "../../log/"                                                                  // Linux log directory.
+  #define SHADER_HOME      "../../Code/shader/"                                                     // Linux OpenGL shaders directory.
+  #define KERNEL_HOME      "../../Code/kernel/"                                                     // Linux OpenCL kernels directory.
+  #define GMSH_HOME        "../../Code/mesh/"                                                       // Linux GMSH mesh directory.
+  #define LOG_HOME         "../../log/"                                                             // Linux log directory.
 #endif
 
 #ifdef WIN32
-  #define SHADER_HOME "..\\..\\Code\\shader\\"                                                      // Windows OpenGL shaders directory.
-  #define KERNEL_HOME "..\\..\\Code\\kernel\\"                                                      // Windows OpenCL kernels directory.
-  #define GMSH_HOME   "..\\..\\Code\\mesh\\"                                                        // Windows GMSH mesh directory.
-  #define LOG_HOME    "..\\..\\log\\"                                                               // Windows log directory.
+  #define SHADER_HOME      "..\\..\\Code\\shader\\"                                                 // Windows OpenGL shaders directory.
+  #define KERNEL_HOME      "..\\..\\Code\\kernel\\"                                                 // Windows OpenCL kernels directory.
+  #define GMSH_HOME        "..\\..\\Code\\mesh\\"                                                   // Windows GMSH mesh directory.
+  #define LOG_HOME         "..\\..\\log\\"                                                          // Windows log directory.
 #endif
 
-#define SHADER_VERT   "voxel_vertex.vert"                                                           // OpenGL vertex shader.
-#define SHADER_GEOM   "voxel_geometry.geom"                                                         // OpenGL geometry shader.
-#define SHADER_FRAG   "voxel_fragment.frag"                                                         // OpenGL fragment shader.
-#define KERNEL_0      "thekernel_0.cl"                                                              // OpenCL kernel source.
-#define KERNEL_1      "thekernel_1.cl"                                                              // OpenCL kernel source.
-#define KERNEL_2      "thekernel_2.cl"                                                              // OpenCL kernel source.
-#define KERNEL_3      "thekernel_3.cl"                                                              // OpenCL kernel source.
-#define UTILITIES     "utilities.cl"                                                                // OpenCL utilities source.
-#define MESH_FILE     "Periodic_square.msh"                                                         // GMSH mesh.
-#define MESH          GMSH_HOME MESH_FILE                                                           // GMSH mesh (full path).
-#define LOG_FILE      "Data"                                                                        // Log file name.
-#define LOG_HEADER    "Vacuum decay."                                                               // Log file header.
-#define LOG_EXTENSION "txt"                                                                         // Log file extension.
-#define LOG           LOG_HOME LOG_FILE                                                             // Log file name (full name, timestamp and extension to be added).
+#define SHADER_VERT        "voxel_vertex.vert"                                                      // OpenGL vertex shader.
+#define SHADER_GEOM        "voxel_geometry.geom"                                                    // OpenGL geometry shader.
+#define SHADER_FRAG        "voxel_fragment.frag"                                                    // OpenGL fragment shader.
+#define KERNEL_0           "thekernel_0.cl"                                                         // OpenCL kernel source.
+#define KERNEL_1           "thekernel_1.cl"                                                         // OpenCL kernel source.
+#define KERNEL_2           "thekernel_2.cl"                                                         // OpenCL kernel source.
+#define KERNEL_3           "thekernel_3.cl"                                                         // OpenCL kernel source.
+#define UTILITIES          "utilities.cl"                                                           // OpenCL utilities source.
+#define MESH_FILE          "Periodic_square.msh"                                                    // GMSH mesh.
+#define MESH               GMSH_HOME MESH_FILE                                                      // GMSH mesh (full path).
+#define LOG_FILE           "Data"                                                                   // Log file name.
+#define LOG_HEADER         "Vacuum decay."                                                          // Log file header.
+#define LOG_EXTENSION      "dat"                                                                    // Log file extension.
+#define LOG                LOG_HOME LOG_FILE                                                        // Log file name (full name, timestamp and extension to be added).
+#define DOWNLOAD_FILE      "Download"                                                               // Download file name.
+#define DOWNLOAD_HEADER    "Vacuum decay."                                                          // Download file header.
+#define DOWNLOAD_EXTENSION "dat"                                                                    // Download file extension.
+#define DOWNLOAD           DOWNLOAD_HOME DOWNLOAD_FILE                                              // Download file name (full name, timestamp and extension to be added).
 
 // INCLUDES:
 #include "nu.hpp"                                                                                   // Neutrino's header file.
@@ -167,6 +171,9 @@ int main ()
 
   // DATA LOG:
   nu::logfile*        log        = new nu::logfile ();                                              // Log file.
+
+  // DATA DOWNLOAD:
+  nu::logfile*        download   = new nu::logfile ();                                              // Download file.
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////// DATA INITIALIZATION //////////////////////////////////////
@@ -338,6 +345,13 @@ int main ()
   log->endline ();                                                                                  // Logging header...
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////// OPENING DATA DOWNLOAD FILE ////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  download->open (DOWNLOAD, DOWNLOAD_EXTENSION, DOWNLOAD_HEADER, nu::TIMESTAMP);                    // Opening data log file...
+  download->write ("#index\t\t");                                                                   // Logging header...
+  download->endline ();                                                                             // Logging header...
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////// APPLICATION LOOP ////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   while(!gl->closed ())                                                                             // Opening window...
@@ -445,21 +459,21 @@ int main ()
     hud->timeplot (1, 0.1f*dt, m_level, 0.0f, "Rejections", "[%]", "m_level", "");                  // Plotting m_level...
     hud->lineplot (0, data_x, data_y, "Potential energy", "phi", "V", "V(phi)");                    // Plotting potential energy profile...
 
-    if(hud->button ("[S]tart", 100) || gl->button_TRIANGLE || gl->key_S)
+    if(hud->button ("[S]tart", 100) || gl->key_S)
     {
       dt = 1.0f;                                                                                    // Setting time step [s].
     }
 
     hud->space (50);                                                                                // Adding space...
 
-    if(hud->button ("[P]ause", 100) || gl->button_TRIANGLE || gl->key_P)
+    if(hud->button ("[P]ause", 100) || gl->key_P)
     {
       dt = 0.0f;                                                                                    // Setting time step [s].
     }
 
     hud->space (50);                                                                                // Adding space...
 
-    if(hud->button ("[R]eset", 100) || gl->button_TRIANGLE || gl->key_R)
+    if(hud->button ("[R]eset", 100) || gl->key_R)
     {
       // Resetting phi for all nodes:
       for(i = 0; i < nodes; i++)
@@ -491,9 +505,28 @@ int main ()
 
     hud->space (50);                                                                                // Adding space...
 
-    if(hud->button ("[E]xit", 100) || gl->button_CIRCLE || gl->key_E)
+    if(hud->button ("[E]xit", 100) || gl->key_E)
     {
       gl->close ();                                                                                 // Closing gl...
+    }
+
+    if(dt == 0)
+    {
+      if(hud->button ("[D]ownload", 100) || gl->key_D)
+      {
+        cl->read (5);                                                                               // Reading phi...
+
+        for(i = 0; i < side_x_nodes; i++)
+        {
+          for(i = 0; j < side)
+            download->write ("\t\t");                                                               // Logging data...
+
+          download->write (phi->data[i]);                                                           // Logging data...
+
+          if(i)
+            log->endline ();                                                                        // Ending log line...
+        }
+      }
     }
 
     hud->finish ();                                                                                 // Finishing window...
