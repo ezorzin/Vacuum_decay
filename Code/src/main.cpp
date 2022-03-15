@@ -507,7 +507,7 @@ int main ()
 
     if(dt == 0)
     {
-      hud->output ("##Done", "Saved", "", p);                                                       // Showing progress...
+      //hud->output ("##Done", "Saved", "", p);                                                       // Showing progress...
 
       if(hud->button ("[D]ownload", 100) || gl->key_D)
       {
@@ -536,7 +536,7 @@ int main ()
 
         download->close ();                                                                         // Closing data download file...
       }
-      p = 100;
+      //p = 100;
     }
 
     hud->finish ();                                                                                 // Finishing window...
