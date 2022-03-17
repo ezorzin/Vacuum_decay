@@ -352,7 +352,6 @@ int main ()
   while(!gl->closed ())                                                                             // Opening window...
   {
     cl->get_tic ();                                                                                 // Getting "tic" [us]...
-
     if(dt > 0.0f)
     {
       cl->acquire ();                                                                               // Acquiring OpenCL kernel...
@@ -507,8 +506,6 @@ int main ()
 
     if(dt == 0)
     {
-      //hud->output ("##Done", "Saved", "", p);                                                       // Showing progress...
-
       if(hud->button ("[D]ownload", 100) || gl->key_D)
       {
 
@@ -536,7 +533,6 @@ int main ()
 
         download->close ();                                                                         // Closing data download file...
       }
-      //p = 100;
     }
 
     hud->finish ();                                                                                 // Finishing window...
