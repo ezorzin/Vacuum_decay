@@ -1,82 +1,82 @@
 /// @file
 
-#define INTEROP            true                                                                     // "true" = use OpenGL-OpenCL interoperability.
-#define SX                 800                                                                      // Window x-size [px].
-#define SY                 600                                                                      // Window y-size [px].
-#define NM                 "Neutrino - Vacuum decay"                                                // Window name.
-#define OX                 0.0f                                                                     // x-axis orbit initial rotation.
-#define OY                 0.0f                                                                     // y-axis orbit initial rotation.
-#define PX                 0.0f                                                                     // x-axis pan initial translation.
-#define PY                 0.0f                                                                     // y-axis pan initial translation.
-#define PZ                 -2.0f                                                                    // z-axis pan initial translation.
+#define INTEROP       true                                                                          // "true" = use OpenGL-OpenCL interoperability.
+#define SX            800                                                                           // Window x-size [px].
+#define SY            600                                                                           // Window y-size [px].
+#define NM            "Neutrino - Vacuum decay"                                                     // Window name.
+#define OX            0.0f                                                                          // x-axis orbit initial rotation.
+#define OY            0.0f                                                                          // y-axis orbit initial rotation.
+#define PX            0.0f                                                                          // x-axis pan initial translation.
+#define PY            0.0f                                                                          // y-axis pan initial translation.
+#define PZ            -2.0f                                                                         // z-axis pan initial translation.
 
-#define SURFACE_TAG        1                                                                        // Surface tag.
-#define BORDER_TAG         9                                                                        // Border tag.
-#define SIDE_X_TAG         10                                                                       // Side "x" tag.
-#define SIDE_Y_TAG         11                                                                       // Side "y" tag.
-#define CURVE_DIM          1                                                                        // Curve dimension.
-#define SURFACE_DIM        2                                                                        // Surface dimension.
-#define BORDER_DIM         1                                                                        // Border dimension.
-#define SIDE_X_DIM         1                                                                        // Side "x" dimension.
-#define SIDE_Y_DIM         1                                                                        // Side "y" dimension.
-#define DS                 0.05f                                                                    // vacuum elementary cell side.
-#define EPSILON            0.01f                                                                    // Tolerance for cell detection.
-#define CELL_VERTICES      4                                                                        // Number of vertices per elementary cell.
+#define SURFACE_TAG   1                                                                             // Surface tag.
+#define BORDER_TAG    9                                                                             // Border tag.
+#define SIDE_X_TAG    10                                                                            // Side "x" tag.
+#define SIDE_Y_TAG    11                                                                            // Side "y" tag.
+#define CURVE_DIM     1                                                                             // Curve dimension.
+#define SURFACE_DIM   2                                                                             // Surface dimension.
+#define BORDER_DIM    1                                                                             // Border dimension.
+#define SIDE_X_DIM    1                                                                             // Side "x" dimension.
+#define SIDE_Y_DIM    1                                                                             // Side "y" dimension.
+#define DS            0.05f                                                                         // vacuum elementary cell side.
+#define EPSILON       0.01f                                                                         // Tolerance for cell detection.
+#define CELL_VERTICES 4                                                                             // Number of vertices per elementary cell.
 
-#define M_MAX              100                                                                      // Maximum allowed number of rejections.
-#define K_INIT             0.5f                                                                     // Radial parameter.
-#define C1_INIT            1.0f                                                                     // c_1 parameter.
-#define C2_INIT            -2.1f                                                                    // c_2 parameter.
-#define LAMBDA_INIT        1.0f                                                                     // lambda parameter.
-#define MU_INIT            0.0f                                                                     // mu parameter.
-#define T_INIT             1.0f                                                                     // T parameter.
-#define T_HAT_INIT         0.08f                                                                    // T_hat parameter.
-#define PHI_INIT           0.0f                                                                     // phi parameter.
-#define PHI_MAX_INIT       1.5f                                                                     // phi_max parameter.
-#define ALPHA_INIT         1.0f                                                                     // Radial exponent.
-#define TRIALS_INIT   100                                                                            // Auto-trials.
-#define DATA_POINTS        100                                                                      // Data points for energy profile.
+#define M_MAX         100                                                                           // Maximum allowed number of rejections.
+#define K_INIT        0.5f                                                                          // Radial parameter.
+#define C1_INIT       1.0f                                                                          // c_1 parameter.
+#define C2_INIT       -2.1f                                                                         // c_2 parameter.
+#define LAMBDA_INIT   1.0f                                                                          // lambda parameter.
+#define MU_INIT       0.0f                                                                          // mu parameter.
+#define T_INIT        1.0f                                                                          // T parameter.
+#define T_HAT_INIT    0.08f                                                                         // T_hat parameter.
+#define PHI_INIT      0.0f                                                                          // phi parameter.
+#define PHI_MAX_INIT  1.5f                                                                          // phi_max parameter.
+#define ALPHA_INIT    1.0f                                                                          // Radial exponent.
+#define TRIALS_INIT   100                                                                           // Auto-trials.
+#define DATA_POINTS   100                                                                           // Data points for energy profile.
 
 #ifdef __linux__
-  #define SHADER_HOME      "../../Code/shader/"                                                     // Linux OpenGL shaders directory.
-  #define KERNEL_HOME      "../../Code/kernel/"                                                     // Linux OpenCL kernels directory.
-  #define GMSH_HOME        "../../Code/mesh/"                                                       // Linux GMSH mesh directory.
-  #define LOG_HOME         "../../log/"                                                             // Linux log directory.
-  #define DLOAD_HOME    "../../log/"                                                             // Linux log directory.
-  #define ULOAD_HOME  "../../log/"                                                                   // Linux log directory.
+  #define SHADER_HOME "../../Code/shader/"                                                          // Linux OpenGL shaders directory.
+  #define KERNEL_HOME "../../Code/kernel/"                                                          // Linux OpenCL kernels directory.
+  #define GMSH_HOME   "../../Code/mesh/"                                                            // Linux GMSH mesh directory.
+  #define LOG_HOME    "../../log/"                                                                  // Linux log directory.
+  #define DLOAD_HOME  "../../log/"                                                                  // Linux log directory.
+  #define ULOAD_HOME  "../../log/"                                                                  // Linux log directory.
 #endif
 
 #ifdef WIN32
-  #define SHADER_HOME      "..\\..\\Code\\shader\\"                                                 // Windows OpenGL shaders directory.
-  #define KERNEL_HOME      "..\\..\\Code\\kernel\\"                                                 // Windows OpenCL kernels directory.
-  #define GMSH_HOME        "..\\..\\Code\\mesh\\"                                                   // Windows GMSH mesh directory.
-  #define LOG_HOME         "..\\..\\log\\"                                                          // Windows log directory.
-  #define DLOAD_HOME    "..\\..\\log\\"                                                          // Windows log directory.
-  #define ULOAD_HOME  "..\\..\\log\\"                                                                // Windows log directory.
+  #define SHADER_HOME "..\\..\\Code\\shader\\"                                                      // Windows OpenGL shaders directory.
+  #define KERNEL_HOME "..\\..\\Code\\kernel\\"                                                      // Windows OpenCL kernels directory.
+  #define GMSH_HOME   "..\\..\\Code\\mesh\\"                                                        // Windows GMSH mesh directory.
+  #define LOG_HOME    "..\\..\\log\\"                                                               // Windows log directory.
+  #define DLOAD_HOME  "..\\..\\log\\"                                                               // Windows log directory.
+  #define ULOAD_HOME  "..\\..\\log\\"                                                               // Windows log directory.
 #endif
 
-#define SHADER_VERT        "voxel_vertex.vert"                                                      // OpenGL vertex shader.
-#define SHADER_GEOM        "voxel_geometry.geom"                                                    // OpenGL geometry shader.
-#define SHADER_FRAG        "voxel_fragment.frag"                                                    // OpenGL fragment shader.
-#define KERNEL_0           "thekernel_0.cl"                                                         // OpenCL kernel source.
-#define KERNEL_1           "thekernel_1.cl"                                                         // OpenCL kernel source.
-#define KERNEL_2           "thekernel_2.cl"                                                         // OpenCL kernel source.
-#define KERNEL_3           "thekernel_3.cl"                                                         // OpenCL kernel source.
-#define UTILITIES          "utilities.cl"                                                           // OpenCL utilities source.
-#define MESH_FILE          "Periodic_square.msh"                                                    // GMSH mesh.
-#define MESH               GMSH_HOME MESH_FILE                                                      // GMSH mesh (full path).
-#define LOG_FILE           "Data"                                                                   // Log file name.
-#define LOG_HEAD         "Vacuum decay."                                                          // Log file header.
-#define LOG_EXT      "dat"                                                                    // Log file extension.
-#define LOG                LOG_HOME LOG_FILE                                                        // Log file name (full name, timestamp and extension to be added).
-#define DLOAD_FILE     "Download_"                                                                    // Download file name.
-#define DLOAD_HEAD    "Vacuum decay."                                                                 // Download file header.
-#define DLOAD_EXT     "dat"                                                                          // Download file extension.
-#define DLOAD         DLOAD_HOME DLOAD_FILE                                                          // Download file name (full name, timestamp and extension to be added).
-#define ULOAD_FILE    "Upload"                                                                       // Upload file name.
-#define ULOAD_HEAD    "Vacuum decay."                                                                 // Upload file header.
-#define ULOAD_EXT     "dat"                                                                          // Upload file extension.
-#define ULOAD         ULOAD_HOME ULOAD_FILE                                                          // Upload file name (full name, timestamp and extension to be added).
+#define SHADER_VERT   "voxel_vertex.vert"                                                           // OpenGL vertex shader.
+#define SHADER_GEOM   "voxel_geometry.geom"                                                         // OpenGL geometry shader.
+#define SHADER_FRAG   "voxel_fragment.frag"                                                         // OpenGL fragment shader.
+#define KERNEL_0      "thekernel_0.cl"                                                              // OpenCL kernel source.
+#define KERNEL_1      "thekernel_1.cl"                                                              // OpenCL kernel source.
+#define KERNEL_2      "thekernel_2.cl"                                                              // OpenCL kernel source.
+#define KERNEL_3      "thekernel_3.cl"                                                              // OpenCL kernel source.
+#define UTILITIES     "utilities.cl"                                                                // OpenCL utilities source.
+#define MESH_FILE     "Periodic_square.msh"                                                         // GMSH mesh.
+#define MESH          GMSH_HOME MESH_FILE                                                           // GMSH mesh (full path).
+#define LOG_FILE      "Data"                                                                        // Log file name.
+#define LOG_HEAD      "Vacuum decay."                                                               // Log file header.
+#define LOG_EXT       "dat"                                                                         // Log file extension.
+#define LOG           LOG_HOME LOG_FILE                                                             // Log file name (full name, timestamp and extension to be added).
+#define DLOAD_FILE    "Download_"                                                                   // Download file name.
+#define DLOAD_HEAD    "Vacuum decay."                                                               // Download file header.
+#define DLOAD_EXT     "dat"                                                                         // Download file extension.
+#define DLOAD         DLOAD_HOME DLOAD_FILE                                                         // Download file name (full name, timestamp and extension to be added).
+#define ULOAD_FILE    "Upload"                                                                      // Upload file name.
+#define ULOAD_HEAD    "Vacuum decay."                                                               // Upload file header.
+#define ULOAD_EXT     "dat"                                                                         // Upload file extension.
+#define ULOAD         ULOAD_HOME ULOAD_FILE                                                         // Upload file name (full name, timestamp and extension to be added).
 
 
 // INCLUDES:
@@ -85,7 +85,7 @@
 int main ()
 {
   // TIMESTAMP:
-  std::string         timestamp;                                                                     // Timestamp.
+  std::string         timestamp;                                                                    // Timestamp.
 
   // INDICES:
   size_t              i;                                                                            // Index [#].
@@ -94,10 +94,10 @@ int main ()
   size_t              j_max;                                                                        // Index [#].
   unsigned int        time_index;                                                                   // Index [#].
   unsigned int        trial_index;                                                                  // Index [#].
-  std::string         trial_text;                                                                    // Trial text, corresponding to trial index.
-  int                 trials;                                                                        // Index [#].
-  int                 trials_new;                                                                    // Index [#].
-  bool                savedata;                                                                      // Save data flag.
+  std::string         trial_text;                                                                   // Trial text, corresponding to trial index.
+  int                 trials;                                                                       // Index [#].
+  int                 trials_new;                                                                   // Index [#].
+  bool                savedata;                                                                     // Save data flag.
 
   // SEED:
   unsigned int        seed;                                                                         // Seed for C++ rand().
@@ -116,8 +116,8 @@ int main ()
   // OPENGL:
   nu::opengl*         gl              = new nu::opengl (NM, SX, SY, OX, OY, PX, PY, PZ);            // OpenGL context.
   nu::shader*         S               = new nu::shader ();                                          // OpenGL shader program.
-  nu::projection_mode pmode       = nu::MONOCULAR;                                              // OpenGL projection mode.
-  nu::view_mode       vmode           = nu::DIRECT;                                                  // OpenGL view mode.
+  nu::projection_mode pmode           = nu::MONOCULAR;                                              // OpenGL projection mode.
+  nu::view_mode       vmode           = nu::DIRECT;                                                 // OpenGL view mode.
 
   // OPENCL:
   nu::opencl*         cl              = new nu::opencl (nu::GPU);                                   // OpenCL context.
@@ -194,7 +194,7 @@ int main ()
   nu::logfile*        download   = new nu::logfile ();                                              // Download file.
 
   // DATA UPLOAD;
-  nu::logfile*        upload        = new nu::logfile ();                                            // Upload file.
+  nu::logfile*        upload     = new nu::logfile ();                                              // Upload file.
   std::vector<int>    upload_i;
   std::vector<float>  upload_x;
   std::vector<float>  upload_y;
@@ -247,6 +247,10 @@ int main ()
     state_threshold->data.push_back ({rand (), rand (), rand (), rand ()});                         // Setting state_th seed...
     color->data.push_back ({0.0f, 1.0f, 0.0f, 1.0f});                                               // Setting node color...
     phi->data.push_back (phi_start);                                                                // Setting initial phi...
+    upload_i.push_back (i);                                                                         // Setting initial index...
+    upload_x.push_back (position->data[i].x);                                                       // Setting initial x...
+    upload_y.push_back (position->data[i].y);                                                       // Setting initial x...
+    upload_phi.push_back (phi_start);                                                               // Setting initial phi...
     phi_int->data.push_back (phi_start);                                                            // Setting initial phi (intermediate value)...
     m_overflow->data.push_back (0);                                                                 // Resetting rejection sampling overflow...
 
@@ -360,20 +364,20 @@ int main ()
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////// OPENING DATA LOG FILE //////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  timestamp   = cl->get_timestamp ();                                                                // Getting timestamp...
-  savedata    = false;                                                                               // Resetting save data flag...
-  time_index  = 0;                                                                                   // Resetting time index...
-  trial_index = 0;                                                                                   // Resetting trial index...
-  trial_text  = std::string ("_#") + std::to_string (trial_index);                                   // Updating trial text...
-  trials      = TRIALS_INIT;                                                                         // Setting auto-trial number...
-  trials_new  = trials;                                                                              // Setting auto-trial number (new index)...
-  log->open (LOG + timestamp, LOG_EXT, LOG_HEAD, "\t", nu::WRITE);                                   // Opening data log file...
-  log->write ("#time");                                                                              // Logging header...
-  log->write ("#sz_avg");                                                                            // Logging header...
-  log->write ("#sz_stderr");                                                                         // Logging header...
-  log->write ("#m_level");                                                                           // Logging header...
-  log->write ("#trial");                                                                             // Logging header...
-  log->endline ();                                                                                   // Logging header...
+  timestamp   = cl->get_timestamp ();                                                               // Getting timestamp...
+  savedata    = false;                                                                              // Resetting save data flag...
+  time_index  = 0;                                                                                  // Resetting time index...
+  trial_index = 0;                                                                                  // Resetting trial index...
+  trial_text  = std::string ("_#") + std::to_string (trial_index);                                  // Updating trial text...
+  trials      = TRIALS_INIT;                                                                        // Setting auto-trial number...
+  trials_new  = trials;                                                                             // Setting auto-trial number (new index)...
+  log->open (LOG + timestamp, LOG_EXT, LOG_HEAD, "\t", nu::WRITE);                                  // Opening data log file...
+  log->write ("#time");                                                                             // Logging header...
+  log->write ("#sz_avg");                                                                           // Logging header...
+  log->write ("#sz_stderr");                                                                        // Logging header...
+  log->write ("#m_level");                                                                          // Logging header...
+  log->write ("#trial");                                                                            // Logging header...
+  log->endline ();                                                                                  // Logging header...
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////// APPLICATION LOOP ////////////////////////////////////////
@@ -424,14 +428,14 @@ int main ()
 
     if(time_index >= trials_new)
     {
-      savedata = true;                                                                               // Setting save data flag...
+      savedata = true;                                                                              // Setting save data flag...
     }
 
     gl->begin ();                                                                                   // Beginning gl...
     gl->poll_events ();                                                                             // Polling gl events...
     gl->mouse_navigation (ms_orbit_rate, ms_pan_rate, ms_decaytime);                                // Polling mouse...
     gl->gamepad_navigation (gmp_orbit_rate, gmp_pan_rate, gmp_decaytime, gmp_deadzone);             // Polling gamepad...
-    gl->plot (S, pmode, vmode);                                                                        // Plotting shared arguments...
+    gl->plot (S, pmode, vmode);                                                                     // Plotting shared arguments...
 
     hud->begin ();                                                                                  // Beginning HUD...
     hud->window ("FALSE VACUUM PARAMETERS:", 200);                                                  // Creating window...
@@ -449,7 +453,7 @@ int main ()
 
     if(trials < TRIALS_INIT)
     {
-      trials = TRIALS_INIT;                                                                          // Justifying trials...
+      trials = TRIALS_INIT;                                                                         // Justifying trials...
     }
 
     if(hud->button ("[U]pdate", 100) || gl->key_U)
@@ -470,12 +474,12 @@ int main ()
       parameter->data[12] = dt;                                                                     // Setting simulation time step...
       cl->write (13);                                                                               // Updating all parameters...
 
-      trials_new         = trials;                                                                   // Updating trials...
+      trials_new          = trials;                                                                 // Updating trials...
 
       // Setting theta for all nodes:
       for(i = 0; i < nodes; i++)
       {
-        upload_phi[i] = phi_start;                                                               // Setting initial theta...
+        upload_phi[i] = phi_start;                                                                  // Setting initial theta...
       }
 
       // UPDATING ENERGY PROFILE:
@@ -535,14 +539,14 @@ int main ()
 
     if(hud->button ("[M]onocular", 100) || gl->key_M)
     {
-      pmode = nu::MONOCULAR;                                                                    // Setting monocular projection...
+      pmode = nu::MONOCULAR;                                                                        // Setting monocular projection...
     }
 
     hud->space (50);                                                                                // Adding space...
 
     if(hud->button ("[B]inocular", 100) || gl->key_B)
     {
-      pmode = nu::BINOCULAR;                                                                    // Setting binocular projection...
+      pmode = nu::BINOCULAR;                                                                        // Setting binocular projection...
     }
 
     hud->space (50);                                                                                // Adding space...
@@ -559,10 +563,10 @@ int main ()
 
         cl->read (5);                                                                               // Reading phi...
 
-        download->open (DLOAD + timestamp + trial_text, DLOAD_EXT, DLOAD_HEAD, "\t", nu::WRITE);     // Opening data log file...
-        download->write ("#index");                                                                  // Logging header...
-        download->write ("#x");                                                                      // Logging header...
-        download->write ("#y");                                                                      // Logging header...                                                                  // Logging header...
+        download->open (DLOAD + timestamp + trial_text, DLOAD_EXT, DLOAD_HEAD, "\t", nu::WRITE);    // Opening data log file...
+        download->write ("#index");                                                                 // Logging header...
+        download->write ("#x");                                                                     // Logging header...
+        download->write ("#y");                                                                     // Logging header...                                                                  // Logging header...
         download->write ("#phi(x,y)");                                                              // Logging header...
         download->endline ();                                                                       // Logging header...
 
@@ -576,10 +580,10 @@ int main ()
           download->endline ();                                                                     // Ending log line...
         }
 
-        download->close (nu::WRITE);                                                                         // Closing data download file...
+        download->close (nu::WRITE);                                                                // Closing data download file...
       }
 
-      hud->space (50);                                                                               // Adding space...
+      hud->space (50);                                                                              // Adding space...
 
       if(hud->button ("[U]pload", 100) || gl->key_D)
       {
@@ -588,7 +592,7 @@ int main ()
         upload_x.clear ();
         upload_phi.clear ();
 
-        upload->open (ULOAD, ULOAD_EXT, ULOAD_HEAD, "\t", nu::READ);                                 // Opening data log file...
+        upload->open (ULOAD, ULOAD_EXT, ULOAD_HEAD, "\t", nu::READ);                                // Opening data log file...
 
         while(!upload->eof ())
         {
@@ -600,17 +604,17 @@ int main ()
         // Setting theta for all nodes:
         for(i = 0; i < nodes; i++)
         {
-          phi->data[i]     = upload_phi[i];                                                      // Setting initial theta...
-          phi_int->data[i] = upload_phi[i];                                                      // Setting initial theta (intermediate value)...
+          phi->data[i]     = upload_phi[i];                                                         // Setting initial theta...
+          phi_int->data[i] = upload_phi[i];                                                         // Setting initial theta (intermediate value)...
         }
 
-        cl->write (5);                                                                               // Updating theta...
-        cl->write (6);                                                                               // Updating theta (intermediate)...
-        cl->acquire ();                                                                              // Acquiring OpenCL kernel...
-        cl->execute (K2, nu::WAIT);                                                                  // Executing OpenCL kernel...
-        cl->release ();                                                                              // Releasing OpenCL kernel...
+        cl->write (5);                                                                              // Updating theta...
+        cl->write (6);                                                                              // Updating theta (intermediate)...
+        cl->acquire ();                                                                             // Acquiring OpenCL kernel...
+        cl->execute (K2, nu::WAIT);                                                                 // Executing OpenCL kernel...
+        cl->release ();                                                                             // Releasing OpenCL kernel...
 
-        savedata = false;                                                                            // Resetting savedata flag...
+        savedata = false;                                                                           // Resetting savedata flag...
       }
     }
 
@@ -625,7 +629,7 @@ int main ()
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////// CLOSING DATA LOG FILE //////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  log->close (nu::WRITE);                                                                                    // Closing data log file...
+  log->close (nu::WRITE);                                                                           // Closing data log file...
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////// CLEANUP ////////////////////////////////////////////
@@ -655,6 +659,7 @@ int main ()
   delete vacuum;                                                                                    // Deleting vacuum mesh...
   delete log;                                                                                       // Deleting log file object...
   delete download;                                                                                  // Deleting download file object...
+  delete upload;                                                                                    // Deleting upload file object...
 
   return 0;
 }
