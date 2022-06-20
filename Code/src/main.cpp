@@ -34,6 +34,7 @@
 #define PHI_INIT           0.0f                                                                     // phi parameter.
 #define PHI_MAX_INIT       1.5f                                                                     // phi_max parameter.
 #define ALPHA_INIT         1.0f                                                                     // Radial exponent.
+#define TRIALS_INIT   100                                                                            // Auto-trials.
 #define DATA_POINTS        100                                                                      // Data points for energy profile.
 
 #ifdef __linux__
@@ -41,7 +42,8 @@
   #define KERNEL_HOME      "../../Code/kernel/"                                                     // Linux OpenCL kernels directory.
   #define GMSH_HOME        "../../Code/mesh/"                                                       // Linux GMSH mesh directory.
   #define LOG_HOME         "../../log/"                                                             // Linux log directory.
-  #define DOWNLOAD_HOME    "../../log/"                                                             // Linux log directory.
+  #define DLOAD_HOME    "../../log/"                                                             // Linux log directory.
+  #define ULOAD_HOME  "../../log/"                                                                   // Linux log directory.
 #endif
 
 #ifdef WIN32
@@ -49,7 +51,8 @@
   #define KERNEL_HOME      "..\\..\\Code\\kernel\\"                                                 // Windows OpenCL kernels directory.
   #define GMSH_HOME        "..\\..\\Code\\mesh\\"                                                   // Windows GMSH mesh directory.
   #define LOG_HOME         "..\\..\\log\\"                                                          // Windows log directory.
-  #define DOWNLOAD_HOME    "..\\..\\log\\"                                                          // Windows log directory.
+  #define DLOAD_HOME    "..\\..\\log\\"                                                          // Windows log directory.
+  #define ULOAD_HOME  "..\\..\\log\\"                                                                // Windows log directory.
 #endif
 
 #define SHADER_VERT        "voxel_vertex.vert"                                                      // OpenGL vertex shader.
@@ -63,19 +66,27 @@
 #define MESH_FILE          "Periodic_square.msh"                                                    // GMSH mesh.
 #define MESH               GMSH_HOME MESH_FILE                                                      // GMSH mesh (full path).
 #define LOG_FILE           "Data"                                                                   // Log file name.
-#define LOG_HEADER         "Vacuum decay."                                                          // Log file header.
-#define LOG_EXTENSION      "dat"                                                                    // Log file extension.
+#define LOG_HEAD         "Vacuum decay."                                                          // Log file header.
+#define LOG_EXT      "dat"                                                                    // Log file extension.
 #define LOG                LOG_HOME LOG_FILE                                                        // Log file name (full name, timestamp and extension to be added).
-#define DOWNLOAD_FILE      "Download"                                                               // Download file name.
-#define DOWNLOAD_HEADER    "Vacuum decay."                                                          // Download file header.
-#define DOWNLOAD_EXTENSION "dat"                                                                    // Download file extension.
-#define DOWNLOAD           DOWNLOAD_HOME DOWNLOAD_FILE                                              // Download file name (full name, timestamp and extension to be added).
+#define DLOAD_FILE     "Download_"                                                                    // Download file name.
+#define DLOAD_HEAD    "Vacuum decay."                                                                 // Download file header.
+#define DLOAD_EXT     "dat"                                                                          // Download file extension.
+#define DLOAD         DLOAD_HOME DLOAD_FILE                                                          // Download file name (full name, timestamp and extension to be added).
+#define ULOAD_FILE    "Upload"                                                                       // Upload file name.
+#define ULOAD_HEAD    "Vacuum decay."                                                                 // Upload file header.
+#define ULOAD_EXT     "dat"                                                                          // Upload file extension.
+#define ULOAD         ULOAD_HOME ULOAD_FILE                                                          // Upload file name (full name, timestamp and extension to be added).
+
 
 // INCLUDES:
 #include "nu.hpp"                                                                                   // Neutrino's header file.
 
 int main ()
 {
+  // TIMESTAMP:
+  std::string         timestamp;                                                                     // Timestamp.
+
   // INDICES:
   size_t              i;                                                                            // Index [#].
   size_t              j;                                                                            // Index [#].
@@ -83,6 +94,10 @@ int main ()
   size_t              j_max;                                                                        // Index [#].
   unsigned int        time_index;                                                                   // Index [#].
   unsigned int        trial_index;                                                                  // Index [#].
+  std::string         trial_text;                                                                    // Trial text, corresponding to trial index.
+  int                 trials;                                                                        // Index [#].
+  int                 trials_new;                                                                    // Index [#].
+  bool                savedata;                                                                      // Save data flag.
 
   // SEED:
   unsigned int        seed;                                                                         // Seed for C++ rand().
@@ -101,7 +116,8 @@ int main ()
   // OPENGL:
   nu::opengl*         gl              = new nu::opengl (NM, SX, SY, OX, OY, PX, PY, PZ);            // OpenGL context.
   nu::shader*         S               = new nu::shader ();                                          // OpenGL shader program.
-  nu::projection_mode proj_mode       = nu::MONOCULAR;                                              // OpenGL projection mode.
+  nu::projection_mode pmode       = nu::MONOCULAR;                                              // OpenGL projection mode.
+  nu::view_mode       vmode           = nu::DIRECT;                                                  // OpenGL view mode.
 
   // OPENCL:
   nu::opencl*         cl              = new nu::opencl (nu::GPU);                                   // OpenCL context.
@@ -176,6 +192,14 @@ int main ()
 
   // DATA DOWNLOAD:
   nu::logfile*        download   = new nu::logfile ();                                              // Download file.
+
+  // DATA UPLOAD;
+  nu::logfile*        upload        = new nu::logfile ();                                            // Upload file.
+  std::vector<int>    upload_i;
+  std::vector<float>  upload_x;
+  std::vector<float>  upload_y;
+  std::vector<float>  upload_phi;
+
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////// DATA INITIALIZATION //////////////////////////////////////
@@ -336,15 +360,20 @@ int main ()
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////// OPENING DATA LOG FILE //////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  time_index  = 0;
-  trial_index = 0;
-  log->open (LOG, LOG_EXTENSION, LOG_HEADER, nu::TIMESTAMP);                                        // Opening data log file...
-  log->write ("#time\t");                                                                           // Logging header...
-  log->write ("#sz_avg\t");                                                                         // Logging header...
-  log->write ("#sz_stderr\t");                                                                      // Logging header...
-  log->write ("#m_level\t");                                                                        // Logging header...
-  log->write ("#trial");                                                                            // Logging header...
-  log->endline ();                                                                                  // Logging header...
+  timestamp   = cl->get_timestamp ();                                                                // Getting timestamp...
+  savedata    = false;                                                                               // Resetting save data flag...
+  time_index  = 0;                                                                                   // Resetting time index...
+  trial_index = 0;                                                                                   // Resetting trial index...
+  trial_text  = std::string ("_#") + std::to_string (trial_index);                                   // Updating trial text...
+  trials      = TRIALS_INIT;                                                                         // Setting auto-trial number...
+  trials_new  = trials;                                                                              // Setting auto-trial number (new index)...
+  log->open (LOG + timestamp, LOG_EXT, LOG_HEAD, "\t", nu::WRITE);                                   // Opening data log file...
+  log->write ("#time");                                                                              // Logging header...
+  log->write ("#sz_avg");                                                                            // Logging header...
+  log->write ("#sz_stderr");                                                                         // Logging header...
+  log->write ("#m_level");                                                                           // Logging header...
+  log->write ("#trial");                                                                             // Logging header...
+  log->endline ();                                                                                   // Logging header...
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////// APPLICATION LOOP ////////////////////////////////////////
@@ -393,11 +422,16 @@ int main ()
       time_index++;                                                                                 // Updating time_index...
     }
 
+    if(time_index >= trials_new)
+    {
+      savedata = true;                                                                               // Setting save data flag...
+    }
+
     gl->begin ();                                                                                   // Beginning gl...
     gl->poll_events ();                                                                             // Polling gl events...
     gl->mouse_navigation (ms_orbit_rate, ms_pan_rate, ms_decaytime);                                // Polling mouse...
     gl->gamepad_navigation (gmp_orbit_rate, gmp_pan_rate, gmp_decaytime, gmp_deadzone);             // Polling gamepad...
-    gl->plot (S, proj_mode);                                                                        // Plotting shared arguments...
+    gl->plot (S, pmode, vmode);                                                                        // Plotting shared arguments...
 
     hud->begin ();                                                                                  // Beginning HUD...
     hud->window ("FALSE VACUUM PARAMETERS:", 200);                                                  // Creating window...
@@ -412,6 +446,11 @@ int main ()
     hud->input ("T:                                 ", "[]    ", "T", &T);                          // T parameter...
     hud->input ("T_hat:                             ", "[]    ", "T_hat", &T_hat);                  // T_hat parameter...
     hud->input ("Maximum rejections:                ", "[]    ", "m_max", &m_max);                  // Maximum rejections...
+
+    if(trials < TRIALS_INIT)
+    {
+      trials = TRIALS_INIT;                                                                          // Justifying trials...
+    }
 
     if(hud->button ("[U]pdate", 100) || gl->key_U)
     {
@@ -430,6 +469,14 @@ int main ()
       parameter->data[11] = ds;                                                                     // Setting mesh side...
       parameter->data[12] = dt;                                                                     // Setting simulation time step...
       cl->write (13);                                                                               // Updating all parameters...
+
+      trials_new         = trials;                                                                   // Updating trials...
+
+      // Setting theta for all nodes:
+      for(i = 0; i < nodes; i++)
+      {
+        upload_phi[i] = phi_start;                                                               // Setting initial theta...
+      }
 
       // UPDATING ENERGY PROFILE:
       data_phi            = 0.0f;
@@ -488,14 +535,14 @@ int main ()
 
     if(hud->button ("[M]onocular", 100) || gl->key_M)
     {
-      proj_mode = nu::MONOCULAR;                                                                    // Setting monocular projection...
+      pmode = nu::MONOCULAR;                                                                    // Setting monocular projection...
     }
 
     hud->space (50);                                                                                // Adding space...
 
     if(hud->button ("[B]inocular", 100) || gl->key_B)
     {
-      proj_mode = nu::BINOCULAR;                                                                    // Setting binocular projection...
+      pmode = nu::BINOCULAR;                                                                    // Setting binocular projection...
     }
 
     hud->space (50);                                                                                // Adding space...
@@ -507,17 +554,15 @@ int main ()
 
     if(dt == 0)
     {
-      //hud->output ("##Done", "Saved", "", p);                                                       // Showing progress...
-
       if(hud->button ("[D]ownload", 100) || gl->key_D)
       {
 
         cl->read (5);                                                                               // Reading phi...
 
-        download->open (DOWNLOAD, DOWNLOAD_EXTENSION, DOWNLOAD_HEADER, nu::TIMESTAMP);              // Opening data log file...
-        download->write ("#index\t");                                                               // Logging header...
-        download->write ("#x\t");                                                                   // Logging header...
-        download->write ("#y\t");                                                                   // Logging header...
+        download->open (DLOAD + timestamp + trial_text, DLOAD_EXT, DLOAD_HEAD, "\t", nu::WRITE);     // Opening data log file...
+        download->write ("#index");                                                                  // Logging header...
+        download->write ("#x");                                                                      // Logging header...
+        download->write ("#y");                                                                      // Logging header...                                                                  // Logging header...
         download->write ("#phi(x,y)");                                                              // Logging header...
         download->endline ();                                                                       // Logging header...
 
@@ -525,18 +570,48 @@ int main ()
         for(i = 0; i < nodes; i++)
         {
           download->write (vacuum->node[i]);                                                        // Logging node index...
-          download->write ("\t");                                                                   // Logging delimiter...
           download->write (vacuum->node_coordinates[i].x);                                          // Logging node x-coordinate...
-          download->write ("\t");                                                                   // Logging delimiter...
           download->write (vacuum->node_coordinates[i].y);                                          // Logging node y-coordinate...
-          download->write ("\t");                                                                   // Logging delimiter...
           download->write (phi->data[i]);                                                           // Logging phi(x,y)...
           download->endline ();                                                                     // Ending log line...
         }
 
-        download->close ();                                                                         // Closing data download file...
+        download->close (nu::WRITE);                                                                         // Closing data download file...
       }
-      //p = 100;
+
+      hud->space (50);                                                                               // Adding space...
+
+      if(hud->button ("[U]pload", 100) || gl->key_D)
+      {
+        upload_i.clear ();
+        upload_x.clear ();
+        upload_x.clear ();
+        upload_phi.clear ();
+
+        upload->open (ULOAD, ULOAD_EXT, ULOAD_HEAD, "\t", nu::READ);                                 // Opening data log file...
+
+        while(!upload->eof ())
+        {
+          upload->read (&upload_i, &upload_x, &upload_y, &upload_phi);
+        }
+
+        upload->close (nu::READ);
+
+        // Setting theta for all nodes:
+        for(i = 0; i < nodes; i++)
+        {
+          phi->data[i]     = upload_phi[i];                                                      // Setting initial theta...
+          phi_int->data[i] = upload_phi[i];                                                      // Setting initial theta (intermediate value)...
+        }
+
+        cl->write (5);                                                                               // Updating theta...
+        cl->write (6);                                                                               // Updating theta (intermediate)...
+        cl->acquire ();                                                                              // Acquiring OpenCL kernel...
+        cl->execute (K2, nu::WAIT);                                                                  // Executing OpenCL kernel...
+        cl->release ();                                                                              // Releasing OpenCL kernel...
+
+        savedata = false;                                                                            // Resetting savedata flag...
+      }
     }
 
     hud->finish ();                                                                                 // Finishing window...
@@ -550,7 +625,7 @@ int main ()
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////// CLOSING DATA LOG FILE //////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-  log->close ();                                                                                    // Closing data log file...
+  log->close (nu::WRITE);                                                                                    // Closing data log file...
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////// CLEANUP ////////////////////////////////////////////
